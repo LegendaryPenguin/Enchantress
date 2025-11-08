@@ -1,0 +1,237 @@
+{
+  "cauldrons": [
+    {
+      "id": "cauldron_001",
+      "name": "Crimson Brew Cauldron",
+      "latitude": 33.2148,
+      "longitude": -97.1331,
+      "max_volume": 1000
+    },
+    {
+      "id": "cauldron_002",
+      "name": "Sapphire Mist Cauldron",
+      "latitude": 33.2155,
+      "longitude": -97.1325,
+      "max_volume": 800
+    },
+    {
+      "id": "cauldron_003",
+      "name": "Golden Elixir Cauldron",
+      "latitude": 33.2142,
+      "longitude": -97.1338,
+      "max_volume": 1200
+    },
+    {
+      "id": "cauldron_004",
+      "name": "Emerald Dreams Cauldron",
+      "latitude": 33.216,
+      "longitude": -97.1318,
+      "max_volume": 750
+    },
+    {
+      "id": "cauldron_005",
+      "name": "Violet Vapors Cauldron",
+      "latitude": 33.2135,
+      "longitude": -97.1345,
+      "max_volume": 900
+    },
+    {
+      "id": "cauldron_006",
+      "name": "Crystal Clear Cauldron",
+      "latitude": 33.2165,
+      "longitude": -97.131,
+      "max_volume": 650
+    },
+    {
+      "id": "cauldron_007",
+      "name": "Ruby Radiance Cauldron",
+      "latitude": 33.2128,
+      "longitude": -97.1352,
+      "max_volume": 1100
+    },
+    {
+      "id": "cauldron_008",
+      "name": "Azure Breeze Cauldron",
+      "latitude": 33.217,
+      "longitude": -97.1305,
+      "max_volume": 700
+    },
+    {
+      "id": "cauldron_009",
+      "name": "Amber Glow Cauldron",
+      "latitude": 33.212,
+      "longitude": -97.136,
+      "max_volume": 950
+    },
+    {
+      "id": "cauldron_010",
+      "name": "Pearl Shimmer Cauldron",
+      "latitude": 33.2175,
+      "longitude": -97.13,
+      "max_volume": 850
+    },
+    {
+      "id": "cauldron_011",
+      "name": "Onyx Shadow Cauldron",
+      "latitude": 33.2115,
+      "longitude": -97.1368,
+      "max_volume": 1050
+    },
+    {
+      "id": "cauldron_012",
+      "name": "Jade Serenity Cauldron",
+      "latitude": 33.218,
+      "longitude": -97.1295,
+      "max_volume": 600
+    }
+  ],
+  "enchanted_market": {
+    "id": "market_001",
+    "name": "The Enchanted Market",
+    "latitude": 33.2148,
+    "longitude": -97.13,
+    "description": "Central trading hub for all potion commerce"
+  },
+  "couriers": [
+    {
+      "courier_id": "courier_witch_01",
+      "name": "Witch A",
+      "max_carrying_capacity": 100
+    },
+    {
+      "courier_id": "courier_witch_02",
+      "name": "Witch B",
+      "max_carrying_capacity": 100
+    },
+    {
+      "courier_id": "courier_witch_03",
+      "name": "Witch C",
+      "max_carrying_capacity": 100
+    },
+    {
+      "courier_id": "courier_witch_04",
+      "name": "Witch D",
+      "max_carrying_capacity": 100
+    },
+    {
+      "courier_id": "courier_witch_05",
+      "name": "Witch E",
+      "max_carrying_capacity": 100
+    }
+  ],
+  "network": {
+    "edges": [
+      {
+        "from": "cauldron_001",
+        "to": "market_001",
+        "travel_time_minutes": 45
+      },
+      {
+        "from": "cauldron_002",
+        "to": "market_001",
+        "travel_time_minutes": 40
+      },
+      {
+        "from": "cauldron_003",
+        "to": "market_001",
+        "travel_time_minutes": 55
+      },
+      {
+        "from": "cauldron_004",
+        "to": "market_001",
+        "travel_time_minutes": 32
+      },
+      {
+        "from": "cauldron_005",
+        "to": "market_001",
+        "travel_time_minutes": 62
+      },
+      {
+        "from": "cauldron_006",
+        "to": "market_001",
+        "travel_time_minutes": 28
+      },
+      {
+        "from": "cauldron_007",
+        "to": "market_001",
+        "travel_time_minutes": 70
+      },
+      {
+        "from": "cauldron_008",
+        "to": "market_001",
+        "travel_time_minutes": 22
+      },
+      {
+        "from": "cauldron_009",
+        "to": "market_001",
+        "travel_time_minutes": 80
+      },
+      {
+        "from": "cauldron_010",
+        "to": "market_001",
+        "travel_time_minutes": 20
+      },
+      {
+        "from": "cauldron_011",
+        "to": "market_001",
+        "travel_time_minutes": 90
+      },
+      {
+        "from": "cauldron_012",
+        "to": "market_001",
+        "travel_time_minutes": 15
+      },
+      {
+        "from": "cauldron_001",
+        "to": "cauldron_002",
+        "travel_time_minutes": 22
+      },
+      {
+        "from": "cauldron_002",
+        "to": "cauldron_004",
+        "travel_time_minutes": 25
+      },
+      {
+        "from": "cauldron_003",
+        "to": "cauldron_005",
+        "travel_time_minutes": 30
+      },
+      {
+        "from": "cauldron_004",
+        "to": "cauldron_006",
+        "travel_time_minutes": 18
+      },
+      {
+        "from": "cauldron_005",
+        "to": "cauldron_007",
+        "travel_time_minutes": 28
+      },
+      {
+        "from": "cauldron_006",
+        "to": "cauldron_008",
+        "travel_time_minutes": 15
+      },
+      {
+        "from": "cauldron_007",
+        "to": "cauldron_009",
+        "travel_time_minutes": 32
+      },
+      {
+        "from": "cauldron_008",
+        "to": "cauldron_010",
+        "travel_time_minutes": 12
+      },
+      {
+        "from": "cauldron_009",
+        "to": "cauldron_011",
+        "travel_time_minutes": 20
+      },
+      {
+        "from": "cauldron_010",
+        "to": "cauldron_012",
+        "travel_time_minutes": 10 
+      }
+    ],
+    "description": "Network topology with travel paths between cauldrons and market"
+  }
+}
