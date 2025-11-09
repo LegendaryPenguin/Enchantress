@@ -1,0 +1,148 @@
+{
+  "metadata": {
+    "tolerance_liters": 0.5,
+    "notes": "If |ticket - actual_drained| > tolerance -> discrepancy"
+  },
+  "cauldrons": [
+    {"id": "cauldron_001", "name": "Crimson Brew Cauldron"},
+    {"id": "cauldron_002", "name": "Sapphire Mist Cauldron"},
+    {"id": "cauldron_003", "name": "Golden Elixir Cauldron"},
+    {"id": "cauldron_004", "name": "Emerald Dreams Cauldron"},
+    {"id": "cauldron_005", "name": "Shadow Essence Cauldron"},
+    {"id": "cauldron_006", "name": "Celestial Frost Cauldron"},
+    {"id": "cauldron_007", "name": "Phoenix Fire Cauldron"},
+    {"id": "cauldron_008", "name": "Mystic Storm Cauldron"},
+    {"id": "cauldron_009", "name": "Lunar Echo Cauldron"},
+    {"id": "cauldron_010", "name": "Solar Flare Cauldron"},
+    {"id": "cauldron_011", "name": "Void Whisper Cauldron"},
+    {"id": "cauldron_012", "name": "Crystal Star Cauldron"}
+  ],
+  "days": [
+    {
+      "date": "2025-11-08",
+      "cauldrons": {
+        "cauldron_001": {
+          "tickets": [
+            {"ticket_id": "TKT001", "amount_collected": 95.5}
+          ],
+          "drains": [
+            {"level_before": 100, "level_after": 5}
+          ]
+        },
+        "cauldron_002": {
+          "tickets": [
+            {"ticket_id": "TKT002", "amount_collected": 80.0}
+          ],
+          "drains": [
+            {"level_before": 85, "level_after": 5}
+          ]
+        }
+      }
+    },
+    {
+      "date": "2025-11-07",
+      "cauldrons": {
+        "cauldron_003": {
+          "tickets": [
+            {"ticket_id": "TKT003", "amount_collected": 92.0}
+          ],
+          "drains": [
+            {"level_before": 95, "level_after": 5}
+          ]
+        },
+        "cauldron_004": {
+          "tickets": [
+            {"ticket_id": "TKT004", "amount_collected": 88.0}
+          ],
+          "drains": [
+            {"level_before": 90, "level_after": 5}
+          ]
+        }
+      }
+    },
+    {
+      "date": "2025-11-06",
+      "cauldrons": {
+        "cauldron_005": {
+          "tickets": [
+            {"ticket_id": "TKT005", "amount_collected": 85.0}
+          ],
+          "drains": [
+            {"level_before": 85, "level_after": 5}
+          ]
+        },
+        "cauldron_006": {
+          "tickets": [
+            {"ticket_id": "TKT006", "amount_collected": 91.5}
+          ],
+          "drains": [
+            {"level_before": 90, "level_after": 5}
+          ]
+        }
+      }
+    },
+    {
+      "date": "2025-11-05",
+      "cauldrons": {
+        "cauldron_007": {
+          "tickets": [
+            {"ticket_id": "TKT007", "amount_collected": 94.0}
+          ],
+          "drains": [
+            {"level_before": 95, "level_after": 5}
+          ]
+        },
+        "cauldron_008": {
+          "tickets": [
+            {"ticket_id": "TKT008", "amount_collected": 87.5}
+          ],
+          "drains": [
+            {"level_before": 85, "level_after": 5}
+          ]
+        }
+      }
+    },
+    {
+      "date": "2025-11-04",
+      "cauldrons": {
+        "cauldron_009": {
+          "tickets": [
+            {"ticket_id": "TKT009", "amount_collected": 89.0}
+          ],
+          "drains": [
+            {"level_before": 90, "level_after": 5}
+          ]
+        },
+        "cauldron_010": {
+          "tickets": [
+            {"ticket_id": "TKT010", "amount_collected": 93.5}
+          ],
+          "drains": [
+            {"level_before": 92, "level_after": 5}
+          ]
+        }
+      }
+    },
+    {
+      "date": "2025-11-03",
+      "cauldrons": {
+        "cauldron_011": {
+          "tickets": [
+            {"ticket_id": "TKT011", "amount_collected": 86.0}
+          ],
+          "drains": [
+            {"level_before": 88, "level_after": 5}
+          ]
+        },
+        "cauldron_012": {
+          "tickets": [
+            {"ticket_id": "TKT012", "amount_collected": 90.5}
+          ],
+          "drains": [
+            {"level_before": 89, "level_after": 5}
+          ]
+        }
+      }
+    }
+  ]
+}

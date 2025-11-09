@@ -5,9 +5,14 @@ import Home from "./pages/Home";
 import Tracking from "./pages/Tracking";
 import Scheduling from "./pages/Scheduling";
 import WeekGraph from "./backend/weekGraph";
+import mapUrl from "./assets/Map.svg";
+import "./index.css";
+import StatsPage from './Discrepency';
+import { DataProvider } from './backend/FetchContext';
 
 export default function App() {
   return (
+    <DataProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -22,5 +27,6 @@ export default function App() {
       </Routes>
       
     </BrowserRouter>
+    </DataProvider>
   );
 }

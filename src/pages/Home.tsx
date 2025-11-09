@@ -178,12 +178,12 @@ export default function Home() {
         setNetEdges([]);
       });
 
-    fetch("/seed/data.json")
+    fetch("/api/Data/?start_date=0&end_date=1762629770")
       .then((r) => r.json())
       .then((j: LevelSnapshot[]) => setLevels(Array.isArray(j) ? j : []))
       .catch(() => setLevels([]));
 
-    fetch("/seed/ticket.json").catch(() => void 0);
+    fetch("/api/Tickets").catch(() => void 0);
   }, []);
 
   const CAULDRONS: Cauldron[] = useMemo(() => BASE_POS.map((b) => ({ ...b, ...metaMap[b.id] })), [metaMap]);
