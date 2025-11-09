@@ -105,7 +105,7 @@ button:focus-visible {
   position: absolute;
   top: 0; left: 0;
   height: 100%;
-  width: clamp(260px, 20vw, 420px); /* ~1/5 of page */
+  width: clamp(390px, 30vw, 630px);
   background: rgba(255,255,255,0.88); /* slightly see-through */
   backdrop-filter: saturate(120%) blur(2px);
   box-shadow: 0 8px 30px rgba(0,0,0,.25);
@@ -132,3 +132,230 @@ button:focus-visible {
   font-weight: 600;
 }
 .nav a:hover { background: rgba(0,0,0,0.08); }
+
+/* --- Cauldron hover tooltip --- */
+/* --- Cauldron tooltip: hug the icon --- */
+/* Tooltip hugs icon; box centered exactly under arrow */
+.marker:hover { z-index: 999; }
+
+.marker .tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% - 14px); /* overlap so it’s very close to the steam */
+  transform: translateX(-50%); /* <-- center the BOX under the arrow */
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 1.25;
+  color: #fff;
+  background: rgba(15,23,42,.92);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.35);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .12s ease, transform .12s ease;
+}
+
+.marker:hover .tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-2px);
+}
+
+.marker .tooltip::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;              /* arrow centered */
+  transform: translateX(-50%);
+  border: 8px solid transparent;
+  border-top: none;
+  border-bottom-color: rgba(15,23,42,.92);
+}
+/* ================= Modal ================= */
+.modal-scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.60);             /* night scrim */
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: scrimFade .12s ease-out;
+}
+
+.modal-card {
+  width: min(1200px, 75vw);
+  max-height: 75vh;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;                                /* scroll inside card */
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,0.12);
+  background: rgba(255,255,255,0.94);
+  color: #0b1020;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.45);
+}
+
+@media (prefers-color-scheme: dark) {
+  .modal-card {
+    background: rgba(17,24,39,0.94);
+    color: #F8FAFC;
+    border-color: rgba(255,255,255,0.12);
+  }
+}
+
+/* --- Header --- */
+.modal-head {
+  position: sticky; top: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  background: inherit;
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+@media (prefers-color-scheme: dark) {
+  .modal-head { border-bottom-color: rgba(255,255,255,0.10); }
+}
+
+.modal-title { display: flex; flex-direction: column; gap: 2px; }
+.modal-name  { font-size: clamp(18px, 2vw, 22px); font-weight: 800; letter-spacing: .2px; }
+.modal-sub   { font-size: 12px; opacity: .8; }
+
+.modal-close {
+  font-size: 28px; line-height: 1;
+  background: transparent; border: none; color: inherit;
+  padding: 4px 8px; border-radius: 8px; cursor: pointer;
+}
+.modal-close:hover { background: rgba(0,0,0,0.08); }
+@media (prefers-color-scheme: dark) {
+  .modal-close:hover { background: rgba(255,255,255,0.08); }
+}
+
+/* --- Fixed start/end display (no inputs) --- */
+.modal-controls {
+  display: grid; gap: 12px; grid-template-columns: 1fr 1fr;
+  padding: 14px 20px;
+}
+.modal-controls .label-fixed { font-size: 12px; opacity: .8; margin-bottom: 4px; }
+.modal-controls .code-fixed {
+  display: inline-block;
+  padding: 8px 10px; border-radius: 10px;
+  background: rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.12);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  .modal-controls .code-fixed { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); }
+}
+.modal-controls small { grid-column: 1 / -1; opacity: .8; }
+
+@media (max-width: 720px) {
+  .modal-card { width: 92vw; }
+  .modal-controls { grid-template-columns: 1fr; }
+}
+
+/* --- Bars --- */
+.meters { padding: 8px 20px 20px; display: grid; gap: 16px; }
+.meter-row { display: grid; grid-template-columns: 80px 1fr; align-items: center; gap: 12px; }
+.meter-label { font-weight: 700; }
+
+.meter {
+  position: relative; height: 42px;
+  border-radius: 12px; overflow: hidden;
+  background: rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.10);
+}
+@media (prefers-color-scheme: dark) {
+  .meter { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.12); }
+}
+
+/* solid purple fill + smooth width transition */
+.meter-fill {
+  height: 100%;
+  background: #8B5CF6;                           /* purple */
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+  transition: width .25s ease;
+}
+
+.meter-text {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  font-weight: 800;
+  color: #0b1020;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.4);
+}
+@media (prefers-color-scheme: dark) {
+  .meter-text { color: #F8FAFC; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+}
+
+/* --- Notes / errors --- */
+.note { padding: 10px 20px 18px; font-size: 13px; opacity: .9; }
+.note.error { color: #ef4444; }
+
+/* --- Animations --- */
+@keyframes scrimFade { from { opacity: 0 } to { opacity: 1 } }
+
+/* --- Mini cauldron + layout for rows --- */
+.meter-row--icon {
+  grid-template-columns: 110px 1fr;
+  align-items: start;
+}
+
+.mini {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.mini img {
+  width: clamp(44px, 7vw, 72px); height: auto; display: block;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,.25));
+}
+.mini-caption { font-weight: 700; font-size: 12px; opacity: .9; }
+
+/* stack to hold value line + bar + ruler */
+.meter-stack { display: flex; flex-direction: column; gap: 6px; }
+
+/* single-line value above the bar */
+.value-inline {
+  font-weight: 800;
+  text-align: left;
+  color: inherit;
+}
+
+/* keep your existing .meter container; only ensure height & radius look good */
+.meter { height: 42px; border-radius: 12px; }
+
+/* keep purple fill (you already set) */
+.meter-fill { background: #8B5CF6; transition: width .25s ease; }
+
+/* ruler under the bar */
+.ruler {
+  position: relative;
+  height: 28px;
+  margin-top: 2px;
+}
+.ruler::before {
+  content: "";
+  position: absolute; left: 0; right: 0;
+  top: 8px; height: 2px;
+  background: rgba(239, 68, 68, 0.6); /* red baseline like your sketch */
+}
+.tick {
+  position: absolute; top: 0; transform: translateX(-50%);
+}
+.tick::before {
+  content: "";
+  display: block;
+  width: 2px; height: 8px; margin: 0 auto;
+  background: rgba(239, 68, 68, 0.9);
+}
+.tick-label {
+  position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+  font-size: 11px; color: #ef4444;
+}
+
+@media (max-width: 720px) {
+  .meter-row--icon { grid-template-columns: 90px 1fr; }
+  .mini img { width: clamp(40px, 9vw, 64px); }
+}
