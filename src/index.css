@@ -1,6 +1,6 @@
+/* ========= Base / Reset ========= */
 html, body, #root { height: 100%; margin: 0; }
 * { box-sizing: border-box; }
-
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -17,27 +17,18 @@ html, body, #root { height: 100%; margin: 0; }
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
+a { font-weight: 500; color: #646cff; text-decoration: inherit; }
+a:hover { color: #535bf2; }
 
 body {
+  /* IMPORTANT: remove forced centering that was shrinking layouts */
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  display: block;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
+h1 { font-size: 3.2em; line-height: 1.1; }
 
 button {
   border-radius: 8px;
@@ -50,28 +41,17 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover {
-  border-color: #646cff;
-}
+button:hover { border-color: #646cff; }
 button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
+button:focus-visible { outline: 4px auto -webkit-focus-ring-color; }
 
 @media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+  :root { color: #213547; background-color: #ffffff; }
+  a:hover { color: #747bff; }
+  button { background-color: #f9f9f9; }
 }
 
-/* ===== Map + Menu + Drawer ===== */
+/* ========= Map + Menu + Drawer ========= */
 .screen { position: relative; height: 100vh; width: 100vw; overflow: hidden; }
 
 .menu-btn {
@@ -106,7 +86,7 @@ button:focus-visible {
   top: 0; left: 0;
   height: 100%;
   width: clamp(390px, 30vw, 630px);
-  background: rgba(255,255,255,0.88); /* slightly see-through */
+  background: rgba(255,255,255,0.88);
   backdrop-filter: saturate(120%) blur(2px);
   box-shadow: 0 8px 30px rgba(0,0,0,.25);
   transform: translateX(-100%);
@@ -133,16 +113,14 @@ button:focus-visible {
 }
 .nav a:hover { background: rgba(0,0,0,0.08); }
 
-/* --- Cauldron hover tooltip --- */
-/* --- Cauldron tooltip: hug the icon --- */
-/* Tooltip hugs icon; box centered exactly under arrow */
+/* ========= Cauldron hover tooltip ========= */
 .marker:hover { z-index: 999; }
 
 .marker .tooltip {
   position: absolute;
   left: 50%;
-  bottom: calc(100% - 14px); /* overlap so it’s very close to the steam */
-  transform: translateX(-50%); /* <-- center the BOX under the arrow */
+  bottom: calc(100% - 14px);
+  transform: translateX(-50%);
   padding: 10px 12px;
   font-size: 12px;
   line-height: 1.25;
@@ -156,27 +134,24 @@ button:focus-visible {
   opacity: 0;
   transition: opacity .12s ease, transform .12s ease;
 }
-
-.marker:hover .tooltip {
-  opacity: 1;
-  transform: translateX(-50%) translateY(-2px);
-}
+.marker:hover .tooltip { opacity: 1; transform: translateX(-50%) translateY(-2px); }
 
 .marker .tooltip::after {
   content: "";
   position: absolute;
   bottom: -8px;
-  left: 50%;              /* arrow centered */
+  left: 50%;
   transform: translateX(-50%);
   border: 8px solid transparent;
   border-top: none;
   border-bottom-color: rgba(15,23,42,.92);
 }
-/* ================= Modal ================= */
+
+/* ========= Modal ========= */
 .modal-scrim {
   position: fixed;
   inset: 0;
-  background: rgba(2, 6, 23, 0.60);             /* night scrim */
+  background: rgba(2, 6, 23, 0.60);
   -webkit-backdrop-filter: blur(2px);
   backdrop-filter: blur(2px);
   display: flex;
@@ -191,14 +166,13 @@ button:focus-visible {
   max-height: 75vh;
   display: flex;
   flex-direction: column;
-  overflow: auto;                                /* scroll inside card */
+  overflow: auto;
   border-radius: 16px;
   border: 1px solid rgba(0,0,0,0.12);
   background: rgba(255,255,255,0.94);
   color: #0b1020;
   box-shadow: 0 24px 80px rgba(0,0,0,0.45);
 }
-
 @media (prefers-color-scheme: dark) {
   .modal-card {
     background: rgba(17,24,39,0.94);
@@ -207,7 +181,6 @@ button:focus-visible {
   }
 }
 
-/* --- Header --- */
 .modal-head {
   position: sticky; top: 0;
   display: flex; align-items: center; justify-content: space-between;
@@ -236,7 +209,7 @@ button:focus-visible {
   .modal-close:hover { background: rgba(255,255,255,0.08); }
 }
 
-/* --- Fixed start/end display (no inputs) --- */
+/* Fixed start/end display blocks */
 .modal-controls {
   display: grid; gap: 12px; grid-template-columns: 1fr 1fr;
   padding: 14px 20px;
@@ -258,7 +231,7 @@ button:focus-visible {
   .modal-controls { grid-template-columns: 1fr; }
 }
 
-/* --- Bars --- */
+/* Bars */
 .meters { padding: 8px 20px 20px; display: grid; gap: 16px; }
 .meter-row { display: grid; grid-template-columns: 80px 1fr; align-items: center; gap: 12px; }
 .meter-label { font-weight: 700; }
@@ -273,10 +246,9 @@ button:focus-visible {
   .meter { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.12); }
 }
 
-/* solid purple fill + smooth width transition */
 .meter-fill {
   height: 100%;
-  background: #8B5CF6;                           /* purple */
+  background: #8B5CF6;
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
   transition: width .25s ease;
 }
@@ -291,59 +263,46 @@ button:focus-visible {
   .meter-text { color: #F8FAFC; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
 }
 
-/* --- Notes / errors --- */
+/* Notes / errors */
 .note { padding: 10px 20px 18px; font-size: 13px; opacity: .9; }
 .note.error { color: #ef4444; }
 
-/* --- Animations --- */
+/* Animations */
 @keyframes scrimFade { from { opacity: 0 } to { opacity: 1 } }
 
-/* --- Mini cauldron + layout for rows --- */
+/* Mini cauldron + layout for rows */
 .meter-row--icon {
   grid-template-columns: 110px 1fr;
   align-items: start;
 }
 
-.mini {
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-}
+.mini { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+/* Let mini icons be a bit larger */
 .mini img {
-  width: clamp(44px, 7vw, 72px); height: auto; display: block;
+  width: clamp(44px, 8vw, 110px);
+  height: auto;
+  display: block;
   filter: drop-shadow(0 1px 3px rgba(0,0,0,.25));
 }
 .mini-caption { font-weight: 700; font-size: 12px; opacity: .9; }
 
-/* stack to hold value line + bar + ruler */
 .meter-stack { display: flex; flex-direction: column; gap: 6px; }
 
-/* single-line value above the bar */
-.value-inline {
-  font-weight: 800;
-  text-align: left;
-  color: inherit;
-}
+.value-inline { font-weight: 800; text-align: left; color: inherit; }
 
-/* keep your existing .meter container; only ensure height & radius look good */
+/* Keep meter tweaks */
 .meter { height: 42px; border-radius: 12px; }
-
-/* keep purple fill (you already set) */
 .meter-fill { background: #8B5CF6; transition: width .25s ease; }
 
-/* ruler under the bar */
-.ruler {
-  position: relative;
-  height: 28px;
-  margin-top: 2px;
-}
+/* Ruler under the bar */
+.ruler { position: relative; height: 28px; margin-top: 2px; }
 .ruler::before {
   content: "";
   position: absolute; left: 0; right: 0;
   top: 8px; height: 2px;
-  background: rgba(239, 68, 68, 0.6); /* red baseline like your sketch */
+  background: rgba(239, 68, 68, 0.6);
 }
-.tick {
-  position: absolute; top: 0; transform: translateX(-50%);
-}
+.tick { position: absolute; top: 0; transform: translateX(-50%); }
 .tick::before {
   content: "";
   display: block;
@@ -357,7 +316,76 @@ button:focus-visible {
 
 @media (max-width: 720px) {
   .meter-row--icon { grid-template-columns: 90px 1fr; }
-  .mini img { width: clamp(40px, 9vw, 64px); }
+  .mini img { width: clamp(40px, 9vw, 90px); }
+}
+
+/* ========= Tracking page helpers =========
+   Add className="tracking" on the outermost div of the page
+   so these rules apply without fighting inline styles.
+*/
+.tracking {
+  --cell: 260px;   /* square side; increase to grow icons */
+  --gap: 10px;
+}
+
+/* optional: a wrapper grid if you move styles out of inline */
+.tracking .day-grid {
+  display: grid;
+  grid-template-columns: repeat(7, var(--cell));
+  gap: var(--gap);
+  padding: 8px 2px;
+  justify-content: center;
+  align-items: center;
+  min-width: calc(7 * var(--cell) + 6 * var(--gap));
+}
+
+/* square card cell */
+.tracking .day-cell {
+  position: relative;
+  width: var(--cell);
+  height: var(--cell);
+  border-radius: 16px;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  overflow: hidden;
+}
+
+/* image well + image sizing */
+.tracking .img-well {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Make the cauldron images larger inside the square */
+.tracking .day-cell img {
+  width: calc(var(--cell) - 20px);
+  height: calc(var(--cell) - 20px);
+  object-fit: contain;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.35));
+}
+
+/* date strip */
+.tracking .date-strip {
+  height: 28px;
+  display: grid;
+  place-items: center;
+  font-size: 12.5px;
+  letter-spacing: 0.2px;
+  color: #EDEAF9;
+  background: rgba(255,255,255,0.04);
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+/* chip (delta badge) */
+.tracking .chip {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 11.5px;
+  letter-spacing: 0.2px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.35);
 }
 
 /* ===== Witchland theme ===== */

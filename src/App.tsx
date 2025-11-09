@@ -6,9 +6,11 @@ import Scheduling from "./pages/Scheduling";
 import mapUrl from "./assets/Map.svg";
 import "./index.css";
 import StatsPage from './Discrepency';
+import { DataProvider } from './backend/FetchContext';
 
 export default function App() {
   return (
+    <DataProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -17,5 +19,6 @@ export default function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
+    </DataProvider>
   );
 }
