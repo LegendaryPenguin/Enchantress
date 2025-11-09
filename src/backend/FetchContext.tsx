@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from "react";
 
 const DataContext = createContext();
@@ -7,12 +6,12 @@ export function DataProvider({ children }) {
   const [data, setData] = useState(null);
   const [ticketData, setTicketData] = useState(null);
 
-  // Fetch main data
   useEffect(() => {
     async function fetchMainData() {
       try {
         const res = await fetch("/api/Data/?start_date=0&end_date=1762629770");
         const json = await res.json();
+        // console.log(json);
         setData(json);
       } catch (err) {
         console.error("Failed to fetch main data:", err);
@@ -20,9 +19,8 @@ export function DataProvider({ children }) {
     }
 
     fetchMainData();
-  }, []); // runs only once
+  }, []); 
 
-  // Fetch ticket data
   useEffect(() => {
     async function fetchTickets() {
       try {
@@ -35,7 +33,7 @@ export function DataProvider({ children }) {
     }
 
     fetchTickets();
-  }, []); // runs only once
+  }, []); 
 
   return (
     <DataContext.Provider value={{ data, ticketData }}>
@@ -44,7 +42,6 @@ export function DataProvider({ children }) {
   );
 }
 
-// custom hook for easy access
 export function useData() {
   return useContext(DataContext);
 }
