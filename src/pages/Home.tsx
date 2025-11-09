@@ -24,6 +24,7 @@ type Meta = { id: string; name: string; latitude: number; longitude: number; max
 type Cauldron = BasePos & Partial<Meta>;
 type LevelSnapshot = { timestamp: string; cauldron_levels: Record<string, number> };
 type MarketMeta = { id: string; name: string; latitude: number; longitude: number; description: string };
+type NetEdge = { from: string; to: string; travel_time_minutes: number };
 
 /* ---------- Fixed map coordinates (0..1, y is bottom-origin) ---------- */
 const BASE_POS: BasePos[] = [
@@ -96,7 +97,6 @@ const normToSvg = (x: number, y: number) => {
 };
 
 // Single-control quadratic arc. `lift` controls how “tall” the arc is.
-// replace your current arcPathNorm with this version
 const arcPathNorm = (
   x1: number, y1: number,
   x2: number, y2: number,
@@ -130,6 +130,11 @@ const arcPathById = (fromId: string, toId: string, lift = 180) => {
   return arcPathNorm(a.x, a.y, b.x, b.y, lift, "up");
 };
 
+// add tiny helper to show number in parentheses
+const cauldronNum = (id: string) => {
+  const m = id.match(/^cauldron_(\d+)$/);
+  return m ? parseInt(m[1], 10) : null;
+};
 
 /* =============================== Home =============================== */
 export default function Home() {
@@ -140,6 +145,8 @@ export default function Home() {
   const [metaMap, setMetaMap] = useState<Record<string, Meta>>({});
   const [levels, setLevels] = useState<LevelSnapshot[]>([]);
   const [marketMeta, setMarketMeta] = useState<MarketMeta | null>(null);
+  const [netEdges, setNetEdges] = useState<NetEdge[]>([]); // << pathways source
+  const [showTimeGraph, setShowTimeGraph] = useState(false);
 
   // --- measure exact centers for straight market lines
   const stageRef = useRef<HTMLDivElement | null>(null);
@@ -157,18 +164,22 @@ export default function Home() {
         (j.cauldrons as Meta[]).forEach((c) => (m[c.id] = c));
         setMetaMap(m);
         setMarketMeta((j.enchanted_market as MarketMeta) ?? null);
+        // pathways
+        const edges: NetEdge[] = (j.network?.edges as NetEdge[]) ?? [];
+        setNetEdges(edges);
       })
       .catch(() => {
         setMetaMap({});
         setMarketMeta(null);
+        setNetEdges([]);
       });
 
-    fetch("/seed/data.json")
+    fetch("/api/Data/?start_date=0&end_date=1762629770")
       .then((r) => r.json())
       .then((j: LevelSnapshot[]) => setLevels(Array.isArray(j) ? j : []))
       .catch(() => setLevels([]));
 
-    fetch("/seed/ticket.json").catch(() => void 0);
+    fetch("/api/Tickets").catch(() => void 0);
   }, []);
 
   const CAULDRONS: Cauldron[] = useMemo(() => BASE_POS.map((b) => ({ ...b, ...metaMap[b.id] })), [metaMap]);
@@ -181,7 +192,7 @@ export default function Home() {
   const startVal = selectedId && firstSnap ? firstSnap.cauldron_levels?.[selectedId] : undefined;
   const endVal = selectedId && lastSnap ? lastSnap.cauldron_levels?.[selectedId] : undefined;
 
-  // recompute line endpoints from DOM centers (straight market lines)
+  // recompute line endpoints from DOM centers (straight market lines)  **UNCHANGED**
   const recomputeEdges = () => {
     const cont = stageRef.current;
     const mEl = marketRef.current;
@@ -296,16 +307,13 @@ export default function Home() {
       >
         {/* Uses the same .edge CSS (stroke:url(#edgeGlow); filter:url(#softGlow)) defined in the straight-lines SVG */}
         {/* market connection you asked to add */}
-        <path className="edge" d={arcPathById("cauldron_012", "market_001", 220)} />
 
         {/* cauldron ↔ cauldron arcs (requested list, with moderate lifts) */}
         <path className="edge" d={arcPathById("cauldron_001", "cauldron_002", 160)} />
         <path className="edge" d={arcPathById("cauldron_002", "cauldron_004", 170)} />
         <path className="edge" d={arcPathById("cauldron_003", "cauldron_005", 190)} />
         <path className="edge" d={arcPathById("cauldron_004", "cauldron_006", 200)} />
-        <path className="edge" d={arcPathById("cauldron_005", "cauldron_007", 210)} />
         <path className="edge" d={arcPathById("cauldron_005", "cauldron_012", 300)} />
-        <path className="edge" d={arcPathById("cauldron_006", "cauldron_008", 180)} />
         <path className="edge" d={arcPathById("cauldron_006", "cauldron_011", 300)} />
         <path className="edge" d={arcPathById("cauldron_007", "cauldron_009", 220)} />
         <path className="edge" d={arcPathById("cauldron_008", "cauldron_010", 180)} />
@@ -398,44 +406,138 @@ export default function Home() {
       {selectedId && selectedMeta && (() => {
         const iconSrc = (BASE_POS.find((c) => c.id === selectedId) ?? BASE_POS[0]).icon;
         const cap = selectedMeta.max_volume || 1;
+
+        // Build pathways list for the selected cauldron (with number in parentheses)
+        const rows = (netEdges || [])
+          .filter(e => e.from === selectedId || e.to === selectedId)
+          .map(e => {
+            const neighbor = e.from === selectedId ? e.to : e.from;
+            const isMarket = neighbor === "market_001";
+            const label = isMarket
+              ? (marketMeta?.name ?? "Enchanted Market")
+              : (() => {
+                  const nm = metaMap[neighbor]?.name ?? neighbor;
+                  const num = cauldronNum(neighbor);
+                  return num ? `${nm} (${num})` : nm;   // <<<<<<<<<< name + (number)
+                })();
+            const icon = isMarket
+              ? marketIcon
+              : (BASE_POS.find(c => c.id === neighbor)?.icon ?? one);
+            return { key: `${e.from}->${e.to}`, label, icon, minutes: e.travel_time_minutes };
+          });
+
         return (
-          <div className="modal-scrim" onClick={() => setSelectedId(null)}>
-            <div className="modal-card" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
-              <div className="modal-head modal-head--center">
-                <button className="modal-close" onClick={() => setSelectedId(null)} aria-label="Close">×</button>
-                <div className="modal-title fancy">
-                  <div className="modal-name darker">
-                    <span className="spark">✦</span> {selectedMeta.name} <span className="spark">✦</span>
+          <>
+            <div className="modal-scrim" onClick={() => setSelectedId(null)}>
+              <div className="modal-card" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+                <div className="modal-head modal-head--center">
+                  <button className="modal-close" onClick={() => setSelectedId(null)} aria-label="Close">×</button>
+                  <div className="modal-title fancy">
+                    <div className="modal-name darker">
+                      <span className="spark">✦</span> {selectedMeta.name} <span className="spark">✦</span>
+                    </div>
+                    <div className="modal-sub">ID: {selectedId} · Max volume: {cap}</div>
+                    <div className="title-rule"></div>
                   </div>
-                  <div className="modal-sub">ID: {selectedId} · Max volume: {cap}</div>
-                  <div className="title-rule"></div>
                 </div>
-              </div>
 
-              <div className="modal-controls controls-row">
-                <div className="date-chip">
-                  <span className="cal" aria-hidden>🗓</span>
-                  <span className="label">Start</span>
-                  <span className="value">{fmtLong(levels[0]?.timestamp)}</span>
+                <div className="modal-controls controls-row">
+                  <div className="date-chip">
+                    <span className="cal" aria-hidden>🗓</span>
+                    <span className="label">Start</span>
+                    <span className="value">{fmtLong(levels[0]?.timestamp)}</span>
+                  </div>
+                  <div className="date-chip">
+                    <span className="cal" aria-hidden>🗓</span>
+                    <span className="label">End</span>
+                    <span className="value">{fmtLong(levels.length ? levels[levels.length - 1].timestamp : undefined)}</span>
+                  </div>
                 </div>
-                <div className="date-chip">
-                  <span className="cal" aria-hidden>🗓</span>
-                  <span className="label">End</span>
-                  <span className="value">{fmtLong(levels.length ? levels[levels.length - 1].timestamp : undefined)}</span>
-                </div>
-              </div>
 
-              <div className="meters">
-                <BarRow label="Start" value={levels[0]?.cauldron_levels?.[selectedId]} max={cap} iconSrc={iconSrc} />
-                <BarRow
-                  label="End"
-                  value={levels.length ? levels[levels.length - 1]?.cauldron_levels?.[selectedId] : undefined}
-                  max={cap}
-                  iconSrc={iconSrc}
-                />
+                <div className="meters">
+                  <BarRow label="Start" value={startVal} max={cap} iconSrc={iconSrc} />
+                  <BarRow label="End"   value={endVal}   max={cap} iconSrc={iconSrc} />
+                </div>
+
+                {/* Pathways list */}
+                <div style={{ padding: "8px 20px 20px" }}>
+                  <div style={{ fontWeight: 900, letterSpacing: ".3px", marginBottom: 10 }}>Pathways</div>
+                  {rows.length === 0 ? (
+                    <div style={{ opacity: .8 }}>No known routes for this cauldron.</div>
+                  ) : (
+                    <div style={{ display: "grid", gap: 10 }}>
+                      {rows.map(r => (
+                        <div key={r.key} style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          gap: 12,
+                          padding: "10px 12px",
+                          borderRadius: 12,
+                          background: "rgba(139,92,246,.10)",
+                          border: "1px solid rgba(139,92,246,.35)",
+                        }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                            <img src={r.icon} alt="" style={{ width: 28, height: 28, objectFit: "contain" }} />
+                            <div style={{ fontWeight: 700 }}>{r.label}</div>
+                          </div>
+                          <div style={{
+                            fontWeight: 800,
+                            padding: "6px 10px",
+                            borderRadius: 999,
+                            background: "rgba(139,92,246,.18)",
+                            border: "1px solid rgba(139,92,246,.35)"
+                          }}>
+                            {r.minutes} min
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Time graph button */}
+                <div style={{ padding: "0 20px 20px", display: "flex", justifyContent: "center" }}>
+                  <button
+                    onClick={() => setShowTimeGraph(true)}
+                    style={{
+                      padding: "12px 18px",
+                      borderRadius: 999,
+                      fontWeight: 800,
+                      letterSpacing: ".3px",
+                      background: "linear-gradient(180deg, #E9D5FF, #8B5CF6)",
+                      color: "#0b1020",
+                      border: "1px solid rgba(0,0,0,.12)",
+                      boxShadow: "0 6px 16px rgba(139,92,246,.35)",
+                      cursor: "pointer"
+                    }}
+                  >
+                    Time graph
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+
+            {/* Empty popup for Time graph */}
+            {showTimeGraph && (
+              <div className="modal-scrim" onClick={() => setShowTimeGraph(false)}>
+                <div className="modal-card" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+                  <div className="modal-head modal-head--center">
+                    <button className="modal-close" onClick={() => setShowTimeGraph(false)} aria-label="Close">×</button>
+                    <div className="modal-title fancy">
+                      <div className="modal-name darker">
+                        <span className="spark">✦</span> Time Graph <span className="spark">✦</span>
+                      </div>
+                      <div className="title-rule"></div>
+                    </div>
+                  </div>
+                  <div style={{ padding: 24, minHeight: 260, display: "grid", placeItems: "center", opacity: .85 }}>
+                    (coming soon)
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         );
       })()}
     </div>

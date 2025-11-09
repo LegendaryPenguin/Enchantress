@@ -2,20 +2,18 @@
 import React, { useEffect, useMemo, useState } from "react";
 import explodeSvg from "../assets/second/explode.svg";
 import notexplodeSvg from "../assets/second/not_explode.svg";
-import { useData } from "../backend/FetchContext";
-import { getDiscrepancyCheck } from "../backend/getDiscrepancyCheck";
+import { useData } from "../backend/FetchContext"
+import { getDiscrepancyCheck } from "../backend/getDiscrepancyCheck"
 
 /* ===== Types ===== */
 type DayRecord = {
-  date: string;                 // "YYYY-MM-DD" (local day)
-  time?: string;                // "HH:MM" (local) for OK days or when available
-  ticket_id?: string;
+  date: string;          // "YYYY-MM-DD"
+  ticket_id: string;
   cauldron_id: string;
-  ticket_volume?: number;
-  drain_volume?: number;
-  delta: number;                // use volume_diff / lost_amount when ticket/drain missing
+  ticket_volume: number;
+  drain_volume: number;
+  delta: number;
   discrepancy: boolean;
-  error_type?: string;
 };
 
 type CauldronDays = {
@@ -24,12 +22,12 @@ type CauldronDays = {
   days: DayRecord[];
 };
 
-type Payload = { cauldrons: CauldronDays[] };
+type FakePayload = { cauldrons: CauldronDays[] };
 
 /* ===== Helpers ===== */
 function formatPrettyDate(isoYYYYMMDD: string) {
   const [y, m, d] = isoYYYYMMDD.split("-").map(Number);
-  const dt = new Date(y, (m ?? 1) - 1, d ?? 1);
+  const dt = new Date(y, (m ?? 1) - 1, d ?? 1); // construct from parts to avoid TZ drift
   return dt.toLocaleDateString(undefined, {
     month: "long",
     day: "numeric",
@@ -37,219 +35,82 @@ function formatPrettyDate(isoYYYYMMDD: string) {
   });
 }
 
-function pad2(n: number) {
-  return n < 10 ? `0${n}` : `${n}`;
-}
-
-/** Convert any Date/ISO/timestamp into local YYYY-MM-DD */
-function toLocalISODate(x: unknown): string {
-  if (!x) return "";
-  const dt = new Date(x as any);
-  if (isNaN(dt.getTime())) return "";
-  const y = dt.getFullYear();
-  const m = pad2(dt.getMonth() + 1);
-  const d = pad2(dt.getDate());
-  return `${y}-${m}-${d}`;
-}
-
-/** Return "HH:MM" local from a timestamp-like value */
-function toLocalHHMM(x: unknown): string | undefined {
-  if (!x) return undefined;
-  const dt = new Date(x as any);
-  if (isNaN(dt.getTime())) return undefined;
-  return `${pad2(dt.getHours())}:${pad2(dt.getMinutes())}`;
-}
-
-function isFiniteNum(n: unknown): n is number {
-  return typeof n === "number" && Number.isFinite(n);
-}
-
-/** Enumerate all local dates (inclusive) from startYYYYMMDD to endYYYYMMDD */
-function enumerateLocalDates(startYYYYMMDD: string, endYYYYMMDD: string): string[] {
-  const out: string[] = [];
-  const start = new Date(`${startYYYYMMDD}T12:00:00`); // midday avoids DST edges
-  const end = new Date(`${endYYYYMMDD}T12:00:00`);
-  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-    out.push(toLocalISODate(d));
-  }
-  return out;
-}
-
-/** From telemetry `data` find a representative time string on a given local day for a cauldron */
-function findAnyTimeForDay(
-  data: any[],
-  cauldronId: string,
-  isoDay: string
-): string | undefined {
-  for (const p of data ?? []) {
-    const hasKey =
-      p?.cauldron_levels &&
-      Object.prototype.hasOwnProperty.call(p.cauldron_levels, cauldronId);
-    if (!hasKey) continue;
-    const day = toLocalISODate(p.timestamp);
-    if (day === isoDay) {
-      return toLocalHHMM(p.timestamp);
-    }
-  }
-  return undefined;
-}
-
 /* ===== Page ===== */
 export default function Tracking() {
-  const [dataPayload, setDataPayload] = useState<Payload | null>(null);
+  const [dataPayload, setDataPayload] = useState<FakePayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
-
+  const [cauldronData, setCauldronData] = useState({});
   const { data, ticketData } = useData();
 
   useEffect(() => {
-    console.log("[Tracking] useData raw telemetry:", data);
-    console.log("[Tracking] useData ticketData:", ticketData);
+    const cauldronKeys = Object.keys(data[0].cauldron_levels);
+    console.log(cauldronKeys);
 
-    if (!Array.isArray(data) || data.length === 0 || !ticketData) return;
+    const newData: Record<string, any[]> = {};
 
-    try {
-      // Discover cauldrons by inspecting first telemetry row
-      const firstLevels = data[0]?.cauldron_levels ?? {};
-      const cauldronKeys = Object.keys(firstLevels);
-      console.log("[Tracking] discovered cauldrons:", cauldronKeys);
-
-      // Gather discrepancies once per cauldron and also track global earliest/latest day
-      const discById = new Map<string, any[]>();
-      let minDay: string | null = null;
-      let maxDay: string | null = null;
-
-      // consider telemetry days too so non-discrepancy days still show
-      for (const p of data) {
-        const day = toLocalISODate(p?.timestamp);
-        if (!day) continue;
-        if (!minDay || day < minDay) minDay = day;
-        if (!maxDay || day > maxDay) maxDay = day;
-      }
-
-      for (const id of cauldronKeys) {
-        const discs: any[] = getDiscrepancyCheck(data, ticketData, id) ?? [];
-        discById.set(id, discs);
-        for (const d of discs) {
-          const day = toLocalISODate(d?.timestamp ?? d?.date ?? d?.iso ?? d?.iso_date);
-          if (!day) continue;
-          if (!minDay || day < minDay) minDay = day;
-          if (!maxDay || day > maxDay) maxDay = day;
-        }
-        console.log(`[Tracking] raw discrepancies for ${id}:`, discs);
-      }
-
-      // Fall back to 7 days from today if we somehow didn't find any date
-      const dayList =
-        minDay && maxDay ? enumerateLocalDates(minDay, maxDay) : (() => {
-          const out: string[] = [];
-          const now = new Date();
-          for (let i = 6; i >= 0; i--) {
-            const d = new Date(now);
-            d.setHours(12, 0, 0, 0);
-            d.setDate(d.getDate() - i);
-            out.push(toLocalISODate(d));
-          }
-          return out;
-        })();
-
-      console.log("[Tracking] global date span (oldest→newest):", dayList);
-
-      const cauldrons: CauldronDays[] = cauldronKeys.map((id) => {
-        const discrepancies = discById.get(id) ?? [];
-
-        // Normalize discrepancies to a per-day map
-        const byDay = new Map<string, any[]>();
-        for (const disc of discrepancies) {
-          const day = toLocalISODate(disc?.timestamp ?? disc?.date ?? disc?.iso ?? disc?.iso_date);
-          if (!day) continue;
-          if (!byDay.has(day)) byDay.set(day, []);
-          byDay.get(day)!.push(disc);
-        }
-        console.log(`[Tracking] byDay map for ${id}:`, byDay);
-
-        // Build records for every date in the full span
-        const days: DayRecord[] = dayList.map((isoDay) => {
-          const discs = byDay.get(isoDay) ?? [];
-          if (discs.length > 0) {
-            // pick discrepancy with largest absolute delta
-            const chosen = discs.reduce((a, b) => {
-              const da = Math.abs(
-                Number(a?.volume_diff ?? a?.lost_amount ?? a?.difference ?? a?.delta ?? 0)
-              );
-              const db = Math.abs(
-                Number(b?.volume_diff ?? b?.lost_amount ?? b?.difference ?? b?.delta ?? 0)
-              );
-              return db > da ? b : a;
-            }, discs[0]);
-
-            const delta = Number(
-              chosen?.volume_diff ?? chosen?.lost_amount ?? chosen?.difference ?? chosen?.delta ?? 0
-            );
-            const ticketVol = isFiniteNum(chosen?.amount_collected ?? chosen?.ticket_volume)
-              ? Number(chosen?.amount_collected ?? chosen?.ticket_volume)
-              : undefined;
-            const drainVol = isFiniteNum(chosen?.actual_drained ?? chosen?.drain_volume)
-              ? Number(chosen?.actual_drained ?? chosen?.drain_volume)
-              : undefined;
-            const ticket_id =
-              chosen?.ticket_id ?? chosen?.ticket ?? chosen?.ticketId ?? undefined;
-            const discrepancy =
-              typeof chosen?.isDiscrepancy === "boolean"
-                ? chosen?.isDiscrepancy
-                : Math.abs(delta) > 0.5;
-
-            const timeStr = toLocalHHMM(chosen?.timestamp);
-
-            const rec: DayRecord = {
-              date: isoDay,
-              time: timeStr,
-              ticket_id,
-              cauldron_id: id,
-              ticket_volume: ticketVol,
-              drain_volume: drainVol,
-              delta: Number.isFinite(delta) ? delta : 0,
-              discrepancy,
-              error_type: chosen?.error_type,
-            };
-            return rec;
-          } else {
-            // OK day → show a representative time if any
-            const timeStr = findAnyTimeForDay(data, id, isoDay);
-            return {
-              date: isoDay,
-              time: timeStr,
-              cauldron_id: id,
-              delta: 0,
-              discrepancy: false,
-            };
-          }
-        });
-
-        console.log(`[Tracking] span DayRecords for ${id}:`, days);
-        return { id, name: id, days };
-      });
-
-      const payload: Payload = { cauldrons };
-      console.log("[Tracking] FINAL payload sent to UI:", payload);
-
-      setDataPayload(payload);
-      setErr(null);
-    } catch (e: any) {
-      console.error("[Tracking] build payload error:", e);
-      setErr(e?.message ?? "failed to build discrepancy payload");
-    } finally {
-      setLoading(false);
-    }
+    cauldronKeys.forEach(cauldron => {
+      const discrepancies = getDiscrepancyCheck(data, ticketData, cauldron);
+      newData[cauldron] = discrepancies;
+    });
+    
+    console.log("discrepancies: ", newData);
+    console.log("cauldron general data: ", data);
+    setCauldronData(newData);
+    
   }, [data, ticketData]);
 
-  // Safety valve: stop spinner if context never arrives
   useEffect(() => {
-    const t = setTimeout(() => {
-      if (!dataPayload && (!data || data.length === 0)) setLoading(false);
-    }, 3000);
-    return () => clearTimeout(t);
-  }, [data, dataPayload]);
+    (async () => {
+      try {
+        // public/seed/fake.json
+        const res = await fetch("/seed/fake.json", { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const raw = await res.json();
+
+        const tol =
+          (raw?.metadata?.tolerance_liters as number | undefined) ?? 0.5;
+
+        const cauldrons: CauldronDays[] = raw.cauldrons.map((c: any) => {
+          const days: DayRecord[] = (raw.days ?? [])
+            .map((d: any) => {
+              const bucket =
+                d.cauldrons?.[c.id] ??
+                d.cauldrons?.[c.id?.replace("cauldron", "cauldrone")];
+              if (!bucket) return null;
+
+              const ticket = bucket.tickets?.[0];
+              const drain = bucket.drains?.[0];
+              if (!ticket || !drain) return null;
+
+              const drainVol =
+                Number(drain.level_before ?? 0) - Number(drain.level_after ?? 0);
+              const ticketVol = Number(ticket.amount_collected ?? 0);
+              const delta = ticketVol - drainVol;
+
+              return {
+                date: String(d.date).slice(0, 10),
+                ticket_id: String(ticket.ticket_id),
+                cauldron_id: String(c.id),
+                ticket_volume: ticketVol,
+                drain_volume: drainVol,
+                delta,
+                discrepancy: Math.abs(delta) > tol,
+              } as DayRecord;
+            })
+            .filter(Boolean) as DayRecord[];
+
+          return { id: c.id, name: c.name, days } as CauldronDays;
+        });
+
+        setDataPayload({ cauldrons });
+      } catch (e: any) {
+        setErr(e?.message ?? "failed to load /seed/fake.json");
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   const cauldrons = useMemo(() => {
     if (!dataPayload) return [];
@@ -258,30 +119,44 @@ export default function Tracking() {
 
   if (loading) return <Screen>Loading…</Screen>;
   if (err) return <Screen>Error: {err}</Screen>;
-  if (!dataPayload || cauldrons.length === 0) return <Screen>No data</Screen>;
+  if (!dataPayload || cauldrons.length === 0) return <Screen>No dataPayload</Screen>;
 
   return (
     <div style={root}>
       {/* Witchy scrollbar styles (scoped via class) */}
       <style>{`
-        .witchy-scroll { scrollbar-width: thin; scrollbar-color: #a78bfa1f transparent; }
-        .witchy-scroll::-webkit-scrollbar { width: 10px; height: 10px; }
+        .witchy-scroll {
+          scrollbar-width: thin;                      /* Firefox */
+          scrollbar-color: #a78bfa1f transparent;     /* thumb/track */
+        }
+        /* WebKit scrollbars */
+        .witchy-scroll::-webkit-scrollbar {
+          width: 10px;
+          height: 10px;
+        }
         .witchy-scroll::-webkit-scrollbar-track {
           background: linear-gradient(180deg, rgba(167,139,250,0.10), rgba(59,7,100,0.14));
-          border-radius: 999px; box-shadow: inset 0 0 6px rgba(0,0,0,0.35);
+          border-radius: 999px;
+          box-shadow: inset 0 0 6px rgba(0,0,0,0.35);
         }
         .witchy-scroll::-webkit-scrollbar-thumb {
           border-radius: 999px;
           background: linear-gradient(180deg, #c084fc, #9333ea);
           border: 2px solid rgba(16,16,20,0.6);
-          box-shadow: 0 0 10px rgba(168,85,247,0.55), inset 0 0 6px rgba(255,255,255,0.18);
+          box-shadow:
+            0 0 10px rgba(168,85,247,0.55),
+            inset 0 0 6px rgba(255,255,255,0.18);
           transition: background 160ms ease, box-shadow 160ms ease;
         }
         .witchy-scroll::-webkit-scrollbar-thumb:hover {
           background: linear-gradient(180deg, #d8b4fe, #a855f7);
-          box-shadow: 0 0 14px rgba(192,132,252,0.75), inset 0 0 8px rgba(255,255,255,0.22);
+          box-shadow:
+            0 0 14px rgba(192,132,252,0.75),
+            inset 0 0 8px rgba(255,255,255,0.22);
         }
-        .witchy-scroll::-webkit-scrollbar-corner { background: transparent; }
+        .witchy-scroll::-webkit-scrollbar-corner {
+          background: transparent;
+        }
       `}</style>
 
       <h1 style={title}>Daily Discrepancy Tracker</h1>
@@ -296,11 +171,15 @@ export default function Tracking() {
               <div style={{ opacity: 0.7, fontSize: 12 }}>{c.id}</div>
             </div>
 
-            {/* Full date span (earliest→latest), horizontally scrollable per cauldron */}
-            <div style={daysGrid} className="witchy-scroll">
-              {c.days.map((rec) => (
-                <DayCard key={`${c.id}-${rec.date}`} iso={rec.date} rec={rec} />
-              ))}
+            {/* 7 responsive squares; no horizontal scroll */}
+            <div style={daysGrid}>
+              {Array.from({ length: 7 }).map((_, i) => {
+                const d = new Date();
+                d.setDate(d.getDate() - (6 - i));
+                const iso = d.toISOString().slice(0, 10);
+                const rec = c.days.find((x) => x.date === iso);
+                return <DayCard key={`${c.id}-${iso}`} iso={iso} rec={rec} />;
+              })}
             </div>
           </div>
         ))}
@@ -314,7 +193,7 @@ type DayCardProps = { iso: string; rec: DayRecord | undefined };
 
 function DayCard({ iso, rec }: DayCardProps) {
   const [flipped, setFlipped] = useState(false);
-  const [hovered, setHovered] = useState(false);
+  const [hovered, setHovered] = useState(false); // hover enlarge
   const isDisc = !!rec?.discrepancy;
   const iconSrc = isDisc ? explodeSvg : notexplodeSvg;
 
@@ -353,8 +232,8 @@ function DayCard({ iso, rec }: DayCardProps) {
         all: "unset",
         cursor: "pointer",
         ...outlineWrap,
-        border: outlineColor,
-        boxShadow,
+        border: outlineColor,    // persistent outline
+        boxShadow,               // depth both sides
         transform: hovered ? "scale(1.06)" : "scale(1)",
         transition: "transform 160ms ease, box-shadow 160ms ease",
         willChange: "transform",
@@ -367,10 +246,14 @@ function DayCard({ iso, rec }: DayCardProps) {
             transform: flipped ? "rotateY(180deg)" : "none",
           }}
         >
-          {/* Front */}
+          {/* Front: image + elevated date pill (both hidden on back) */}
           <div style={frontFace}>
             <div style={frontCenter}>
-              <img src={iconSrc} alt={isDisc ? "discrepancy" : "ok"} style={iconImg} />
+              <img
+                src={iconSrc}
+                alt={isDisc ? "discrepancy" : "ok"}
+                style={iconImg}
+              />
               <div style={datePillWrap}>
                 <div style={{ position: "relative" }}>
                   <div style={dateHalo} />
@@ -380,43 +263,31 @@ function DayCard({ iso, rec }: DayCardProps) {
             </div>
           </div>
 
-          {/* Back */}
+          {/* Back: solid info face only */}
           <div style={backFace}>
             <div style={backBody}>
               {rec ? (
                 <>
-                  {!rec.discrepancy ? (
-                    <>
-                      {rec.time ? (
-                        <div style={{ ...backRowBig, opacity: 0.95 }}>
-                          Time: {rec.time}
-                        </div>
-                      ) : (
-                        <div style={{ ...backRowBig, opacity: 0.85 }}>
-                          No discrepancy
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      <div style={{ ...chip, background: deltaBg, color: "#131318", fontSize: 14 }}>
-                        Δ {rec.delta.toFixed(2)}
-                      </div>
-                      {rec.error_type && (
-                        <div style={{ ...backRowBig, opacity: 0.92 }}>
-                          Error: {rec.error_type}
-                        </div>
-                      )}
-                      {rec.time && <div style={backRowBig}>TS: {rec.time}</div>}
-                      {rec.ticket_id && <div style={backRowBig}>Ticket: {rec.ticket_id}</div>}
-                      {isFiniteNum(rec.ticket_volume) && (
-                        <div style={backRowBig}>Ticket Vol: {rec.ticket_volume!.toFixed(2)}</div>
-                      )}
-                      {isFiniteNum(rec.drain_volume) && (
-                        <div style={backRowBig}>VolDiff: {rec.delta.toFixed(2)}</div>
-                      )}
-                    </>
-                  )}
+                  <div
+                    style={{
+                      ...chip,
+                      background: deltaBg,
+                      color: "#131318",
+                      fontSize: 14,
+                    }}
+                  >
+                    Δ {rec.delta.toFixed(2)}
+                  </div>
+                  <div style={backRowBig}>Ticket: {rec.ticket_id}</div>
+                  <div style={backRowBig}>
+                    Ticket Vol: {rec.ticket_volume.toFixed(2)}
+                  </div>
+                  <div style={backRowBig}>
+                    Drain Vol: {rec.drain_volume.toFixed(2)}
+                  </div>
+                  <div style={{ ...backRowBig, opacity: 0.85 }}>
+                    Status: {rec.discrepancy ? "Discrepancy" : "OK"}
+                  </div>
                 </>
               ) : (
                 <div style={{ ...backRowBig, opacity: 0.85 }}>No record</div>
@@ -450,6 +321,7 @@ function Screen({ children }: { children: React.ReactNode }) {
 
 /* ---------- styles ---------- */
 
+/* Root layout */
 const root: React.CSSProperties = {
   minHeight: "100vh",
   color: "white",
@@ -503,20 +375,21 @@ const cardHead: React.CSSProperties = {
   color: "#EDEAF9",
 };
 
-/** Horizontal scroller per cauldron row */
+/**
+ * 7 columns that always fit: each square uses a responsive width based on viewport.
+ * Using aspectRatio keeps them perfectly square. No minWidth => no horizontal scroll.
+ */
 const daysGrid: React.CSSProperties = {
   display: "grid",
-  gridAutoFlow: "column",
-  gridAutoColumns: "minmax(140px, 156px)",
+  gridTemplateColumns: "repeat(7, 1fr)",
   gap: 10,
   alignItems: "start",
-  overflowX: "auto",
-  padding: "6px 6px 8px 8px", // ensure left-most card isn't clipped
 };
 
+/* Outline wrapper: persistent border, square sizing via responsive width */
 const outlineWrap: React.CSSProperties = {
   position: "relative",
-  width: "min(12.2vw, 156px)",
+  width: "min(12.2vw, 156px)",   // slightly smaller container => fits 7 across
   aspectRatio: "1 / 1",
   borderRadius: 14,
 };
@@ -536,7 +409,6 @@ const flipInner: React.CSSProperties = {
   transformStyle: "preserve-3d",
   borderRadius: 14,
 };
-
 
 const faceBase: React.CSSProperties = {
   position: "absolute",
@@ -569,17 +441,19 @@ const frontCenter: React.CSSProperties = {
   placeItems: "center",
 };
 
+/* Make the icon visually big and shifted upward */
 const iconImg: React.CSSProperties = {
   width: "94%",
   height: "94%",
   objectFit: "contain",
-  transform: "translateY(-18px)",
+  transform: "translateY(-18px)", // ↑ moved up more
   filter: "drop-shadow(0 6px 14px rgba(0,0,0,0.35))",
 };
 
+/* Date pill (cleaner look), shifted further upward */
 const datePillWrap: React.CSSProperties = {
   position: "absolute",
-  bottom: 31,
+  bottom: 31,                  // ↑ moved up more
   left: "50%",
   transform: "translateX(-50%)",
   display: "grid",
