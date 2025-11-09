@@ -17,3 +17,4 @@ export default function getForecast(cauldron, avgRate, start_time, end_time){
           highRange: highRange};
 
 }
+
