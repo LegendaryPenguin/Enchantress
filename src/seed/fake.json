@@ -1,0 +1,145 @@
+{
+  "metadata": {
+    "tolerance_liters": 2.0,
+    "notes": "If |ticket - actual_drained| > tolerance -> discrepancy."
+  },
+  "cauldrons": [
+    {"id":"cauldrone_001","name":"Crimson Brew Cauldron","max_volume":1000},
+    {"id":"cauldrone_002","name":"Sapphire Mist Cauldron","max_volume":800},
+    {"id":"cauldrone_003","name":"Golden Elixir Cauldron","max_volume":1200},
+    {"id":"cauldrone_004","name":"Emerald Dreams Cauldron","max_volume":750},
+    {"id":"cauldrone_005","name":"Violet Vapors Cauldron","max_volume":900},
+    {"id":"cauldrone_006","name":"Crystal Clear Cauldron","max_volume":650},
+    {"id":"cauldrone_007","name":"Ruby Radiance Cauldron","max_volume":1100},
+    {"id":"cauldrone_008","name":"Azure Breeze Cauldron","max_volume":700},
+    {"id":"cauldrone_009","name":"Amber Glow Cauldron","max_volume":950},
+    {"id":"cauldrone_010","name":"Pearl Shimmer Cauldron","max_volume":850},
+    {"id":"cauldrone_011","name":"Onyx Shadow Cauldron","max_volume":1050},
+    {"id":"cauldrone_012","name":"Jade Serenity Cauldron","max_volume":600}
+  ],
+  "days": [
+    {
+      "date": "2025-10-30",
+      "cauldrons": {
+        "cauldrone_001": {
+          "fill_rate_lpm": 0.20,
+          "drains": [
+            {
+              "start": "2025-10-30T14:00:00Z",
+              "end":   "2025-10-30T14:25:00Z",
+              "level_before": 420.0,
+              "level_after":  330.5
+            }
+          ],
+          "tickets": [
+            {
+              "ticket_id": "TT_20251030_001",
+              "courier_id": "courier_witch_01",
+              "amount_collected": 95.5
+            }
+          ]
+        },
+        "cauldrone_002": {
+          "fill_rate_lpm": 0.18,
+          "drains": [
+            {
+              "start": "2025-10-30T10:10:00Z",
+              "end":   "2025-10-30T10:32:00Z",
+              "level_before": 360.0,
+              "level_after":  285.0
+            }
+          ],
+          "tickets": [
+            {
+              "ticket_id": "TT_20251030_002",
+              "courier_id": "courier_witch_02",
+              "amount_collected": 80.0
+            }
+          ]
+        },
+        "cauldrone_003": {
+          "fill_rate_lpm": 0.22,
+          "drains": [],
+          "tickets": []
+        },
+        "cauldrone_004": { "fill_rate_lpm": 0.15, "drains": [], "tickets": [] },
+        "cauldrone_005": { "fill_rate_lpm": 0.21, "drains": [], "tickets": [] },
+        "cauldrone_006": { "fill_rate_lpm": 0.14, "drains": [], "tickets": [] },
+        "cauldrone_007": { "fill_rate_lpm": 0.25, "drains": [], "tickets": [] },
+        "cauldrone_008": { "fill_rate_lpm": 0.17, "drains": [], "tickets": [] },
+        "cauldrone_009": { "fill_rate_lpm": 0.19, "drains": [], "tickets": [] },
+        "cauldrone_010": { "fill_rate_lpm": 0.20, "drains": [], "tickets": [] },
+        "cauldrone_011": { "fill_rate_lpm": 0.23, "drains": [], "tickets": [] },
+        "cauldrone_012": { "fill_rate_lpm": 0.16, "drains": [], "tickets": [] }
+      }
+    },
+    {
+      "date": "2025-10-31",
+      "cauldrons": {
+        "cauldrone_001": {
+          "fill_rate_lpm": 0.20,
+          "drains": [
+            {
+              "start": "2025-10-31T15:40:00Z",
+              "end":   "2025-10-31T16:05:00Z",
+              "level_before": 410.0,
+              "level_after":  320.0
+            }
+          ],
+          "tickets": [
+            {
+              "ticket_id": "TT_20251031_006",
+              "courier_id": "courier_witch_03",
+              "amount_collected": 88.0
+            }
+          ]
+        },
+        "cauldrone_002": {
+          "fill_rate_lpm": 0.18,
+          "drains": [
+            {
+              "start": "2025-10-31T09:20:00Z",
+              "end":   "2025-10-31T09:35:00Z",
+              "level_before": 300.0,
+              "level_after":  250.0
+            }
+          ],
+          "tickets": [
+            {
+              "ticket_id": "TT_20251031_007",
+              "courier_id": "courier_witch_02",
+              "amount_collected": 55.0
+            }
+          ]
+        },
+        "cauldrone_003": {
+          "fill_rate_lpm": 0.22,
+          "drains": [
+            {
+              "start": "2025-10-31T12:00:00Z",
+              "end":   "2025-10-31T12:20:00Z",
+              "level_before": 500.0,
+              "level_after":  420.0
+            }
+          ],
+          "tickets": [
+            {
+              "ticket_id": "TT_20251031_008",
+              "courier_id": "courier_witch_05",
+              "amount_collected": 90.0
+            }
+          ]
+        },
+        "cauldrone_004": { "fill_rate_lpm": 0.15, "drains": [], "tickets": [] },
+        "cauldrone_005": { "fill_rate_lpm": 0.21, "drains": [], "tickets": [] },
+        "cauldrone_006": { "fill_rate_lpm": 0.14, "drains": [], "tickets": [] },
+        "cauldrone_007": { "fill_rate_lpm": 0.25, "drains": [], "tickets": [] },
+        "cauldrone_008": { "fill_rate_lpm": 0.17, "drains": [], "tickets": [] },
+        "cauldrone_009": { "fill_rate_lpm": 0.19, "drains": [], "tickets": [] },
+        "cauldrone_010": { "fill_rate_lpm": 0.20, "drains": [], "tickets": [] },
+        "cauldrone_011": { "fill_rate_lpm": 0.23, "drains": [], "tickets": [] },
+        "cauldrone_012": { "fill_rate_lpm": 0.16, "drains": [], "tickets": [] }
+      }
+    }
+  ]
+}
