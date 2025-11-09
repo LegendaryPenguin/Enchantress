@@ -1,0 +1,1055 @@
+{
+  "metadata": {
+    "total_tickets": 149,
+    "suspicious_tickets": 0,
+    "date_range": {
+      "start": "2025-10-30T00:15:00Z",
+      "end": "2025-11-11T12:54:00Z"
+    }
+  },
+  "transport_tickets": [
+    {
+      "ticket_id": "TT_20251030_001",
+      "cauldron_id": "cauldron_012",
+      "amount_collected": 94.37,
+      "courier_id": "courier_witch_01",
+      "date": "2025-10-30"
+    },
+    {
+      "ticket_id": "TT_20251030_002",
+      "cauldron_id": "cauldron_011",
+      "amount_collected": 96.63,
+      "courier_id": "courier_witch_02",
+      "date": "2025-10-30"
+    },
+    {
+      "ticket_id": "TT_20251030_003",
+      "cauldron_id": "cauldron_010",
+      "amount_collected": 95.85,
+      "courier_id": "courier_witch_04",
+      "date": "2025-10-30"
+    },
+    {
+      "ticket_id": "TT_20251030_004",
+      "cauldron_id": "cauldron_008",
+      "amount_collected": 95.35,
+      "courier_id": "courier_witch_05",
+      "date": "2025-10-30"
+    },
+    {
+      "ticket_id": "TT_20251030_005",
+      "cauldron_id": "cauldron_007",
+      "amount_collected": 97.51,
+      "courier_id": "courier_witch_03",
+      "date": "2025-10-30"
+    },
+    {
+      "ticket_id": "TT_20251031_006",
+      "cauldron_id": "cauldron_006",
+      "amount_collected": 94.34,
+      "courier_id": "courier_witch_01",
+      "date": "2025-10-31"
+    },
+    {
+      "ticket_id": "TT_20251031_007",
+      "cauldron_id": "cauldron_005",
+      "amount_collected": 96.26,
+      "courier_id": "courier_witch_03",
+      "date": "2025-10-31"
+    },
+    {
+      "ticket_id": "TT_20251031_008",
+      "cauldron_id": "cauldron_004",
+      "amount_collected": 95.1,
+      "courier_id": "courier_witch_05",
+      "date": "2025-10-31"
+    },
+    {
+      "ticket_id": "TT_20251031_009",
+      "cauldron_id": "cauldron_003",
+      "amount_collected": 97.05,
+      "courier_id": "courier_witch_03",
+      "date": "2025-10-31"
+    },
+    {
+      "ticket_id": "TT_20251031_010",
+      "cauldron_id": "cauldron_002",
+      "amount_collected": 94.82,
+      "courier_id": "courier_witch_01",
+      "date": "2025-10-31"
+    },
+    {
+      "ticket_id": "TT_20251101_011",
+      "cauldron_id": "cauldron_001",
+      "amount_collected": 95.8,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-01"
+    },
+    {
+      "ticket_id": "TT_20251101_012",
+      "cauldron_id": "cauldron_009",
+      "amount_collected": 20.95,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-01"
+    },
+    {
+      "ticket_id": "TT_20251101_013",
+      "cauldron_id": "cauldron_012",
+      "amount_collected": 65.74,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-01"
+    },
+    {
+      "ticket_id": "TT_20251030_014",
+      "cauldron_id": "cauldron_011",
+      "amount_collected": 96.63,
+      "courier_id": "courier_witch_03",
+      "date": "2025-10-30"
+    },
+    {
+      "ticket_id": "TT_20251030_015",
+      "cauldron_id": "cauldron_011",
+      "amount_collected": 96.63,
+      "courier_id": "courier_witch_01",
+      "date": "2025-10-30"
+    },
+    {
+      "ticket_id": "TT_20251030_016",
+      "cauldron_id": "cauldron_010",
+      "amount_collected": 95.85,
+      "courier_id": "courier_witch_04",
+      "date": "2025-10-30"
+    },
+    {
+      "ticket_id": "TT_20251030_017",
+      "cauldron_id": "cauldron_008",
+      "amount_collected": 95.35,
+      "courier_id": "courier_witch_02",
+      "date": "2025-10-30"
+    },
+    {
+      "ticket_id": "TT_20251031_018",
+      "cauldron_id": "cauldron_011",
+      "amount_collected": 96.63,
+      "courier_id": "courier_witch_05",
+      "date": "2025-10-31"
+    },
+    {
+      "ticket_id": "TT_20251031_019",
+      "cauldron_id": "cauldron_008",
+      "amount_collected": 72.76,
+      "courier_id": "courier_witch_02",
+      "date": "2025-10-31"
+    },
+    {
+      "ticket_id": "TT_20251101_020",
+      "cauldron_id": "cauldron_007",
+      "amount_collected": 97.51,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-01"
+    },
+    {
+      "ticket_id": "TT_20251101_021",
+      "cauldron_id": "cauldron_010",
+      "amount_collected": 85.67,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-01"
+    },
+    {
+      "ticket_id": "TT_20251102_022",
+      "cauldron_id": "cauldron_011",
+      "amount_collected": 96.63,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-02"
+    },
+    {
+      "ticket_id": "TT_20251102_023",
+      "cauldron_id": "cauldron_006",
+      "amount_collected": 94.41,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-02"
+    },
+    {
+      "ticket_id": "TT_20251031_024",
+      "cauldron_id": "cauldron_008",
+      "amount_collected": 56.07,
+      "courier_id": "courier_witch_04",
+      "date": "2025-10-31"
+    },
+    {
+      "ticket_id": "TT_20251031_025",
+      "cauldron_id": "cauldron_005",
+      "amount_collected": 96.26,
+      "courier_id": "courier_witch_01",
+      "date": "2025-10-31"
+    },
+    {
+      "ticket_id": "TT_20251031_026",
+      "cauldron_id": "cauldron_008",
+      "amount_collected": 28.79,
+      "courier_id": "courier_witch_04",
+      "date": "2025-10-31"
+    },
+    {
+      "ticket_id": "TT_20251031_027",
+      "cauldron_id": "cauldron_004",
+      "amount_collected": 95.1,
+      "courier_id": "courier_witch_02",
+      "date": "2025-10-31"
+    },
+    {
+      "ticket_id": "TT_20251031_028",
+      "cauldron_id": "cauldron_005",
+      "amount_collected": 96.26,
+      "courier_id": "courier_witch_05",
+      "date": "2025-10-31"
+    },
+    {
+      "ticket_id": "TT_20251101_029",
+      "cauldron_id": "cauldron_004",
+      "amount_collected": 95.1,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-01"
+    },
+    {
+      "ticket_id": "TT_20251101_030",
+      "cauldron_id": "cauldron_008",
+      "amount_collected": 40.41,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-01"
+    },
+    {
+      "ticket_id": "TT_20251101_031",
+      "cauldron_id": "cauldron_003",
+      "amount_collected": 97.05,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-01"
+    },
+    {
+      "ticket_id": "TT_20251102_032",
+      "cauldron_id": "cauldron_005",
+      "amount_collected": 96.26,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-02"
+    },
+    {
+      "ticket_id": "TT_20251102_033",
+      "cauldron_id": "cauldron_002",
+      "amount_collected": 71.26,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-02"
+    },
+    {
+      "ticket_id": "TT_20251103_034",
+      "cauldron_id": "cauldron_004",
+      "amount_collected": 71.39,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-03"
+    },
+    {
+      "ticket_id": "TT_20251103_035",
+      "cauldron_id": "cauldron_001",
+      "amount_collected": 95.8,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-03"
+    },
+    {
+      "ticket_id": "TT_20251101_036",
+      "cauldron_id": "cauldron_008",
+      "amount_collected": 52.1,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-01"
+    },
+    {
+      "ticket_id": "TT_20251101_037",
+      "cauldron_id": "cauldron_009",
+      "amount_collected": 99.87,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-01"
+    },
+    {
+      "ticket_id": "TT_20251101_038",
+      "cauldron_id": "cauldron_008",
+      "amount_collected": 19.79,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-01"
+    },
+    {
+      "ticket_id": "TT_20251101_039",
+      "cauldron_id": "cauldron_003",
+      "amount_collected": 97.05,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-01"
+    },
+    {
+      "ticket_id": "TT_20251101_040",
+      "cauldron_id": "cauldron_012",
+      "amount_collected": 94.37,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-01"
+    },
+    {
+      "ticket_id": "TT_20251101_041",
+      "cauldron_id": "cauldron_009",
+      "amount_collected": 99.87,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-01"
+    },
+    {
+      "ticket_id": "TT_20251102_042",
+      "cauldron_id": "cauldron_012",
+      "amount_collected": 94.37,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-02"
+    },
+    {
+      "ticket_id": "TT_20251102_043",
+      "cauldron_id": "cauldron_008",
+      "amount_collected": 39.2,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-02"
+    },
+    {
+      "ticket_id": "TT_20251102_044",
+      "cauldron_id": "cauldron_007",
+      "amount_collected": 97.51,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-02"
+    },
+    {
+      "ticket_id": "TT_20251103_045",
+      "cauldron_id": "cauldron_009",
+      "amount_collected": 75.16,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-03"
+    },
+    {
+      "ticket_id": "TT_20251103_046",
+      "cauldron_id": "cauldron_003",
+      "amount_collected": 97.05,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-03"
+    },
+    {
+      "ticket_id": "TT_20251104_047",
+      "cauldron_id": "cauldron_010",
+      "amount_collected": 95.85,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-04"
+    },
+    {
+      "ticket_id": "TT_20251104_048",
+      "cauldron_id": "cauldron_012",
+      "amount_collected": 82.78,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-04"
+    },
+    {
+      "ticket_id": "TT_20251102_049",
+      "cauldron_id": "cauldron_011",
+      "amount_collected": 73.21,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-02"
+    },
+    {
+      "ticket_id": "TT_20251102_050",
+      "cauldron_id": "cauldron_008",
+      "amount_collected": 48.38,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-02"
+    },
+    {
+      "ticket_id": "TT_20251102_051",
+      "cauldron_id": "cauldron_011",
+      "amount_collected": 96.63,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-02"
+    },
+    {
+      "ticket_id": "TT_20251103_052",
+      "cauldron_id": "cauldron_006",
+      "amount_collected": 94.41,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-03"
+    },
+    {
+      "ticket_id": "TT_20251103_053",
+      "cauldron_id": "cauldron_007",
+      "amount_collected": 97.51,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-03"
+    },
+    {
+      "ticket_id": "TT_20251102_054",
+      "cauldron_id": "cauldron_008",
+      "amount_collected": 49.25,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-02"
+    },
+    {
+      "ticket_id": "TT_20251102_055",
+      "cauldron_id": "cauldron_005",
+      "amount_collected": 96.26,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-02"
+    },
+    {
+      "ticket_id": "TT_20251103_056",
+      "cauldron_id": "cauldron_008",
+      "amount_collected": 21.89,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-03"
+    },
+    {
+      "ticket_id": "TT_20251103_057",
+      "cauldron_id": "cauldron_011",
+      "amount_collected": 96.63,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-03"
+    },
+    {
+      "ticket_id": "TT_20251104_058",
+      "cauldron_id": "cauldron_002",
+      "amount_collected": 94.82,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-04"
+    },
+    {
+      "ticket_id": "TT_20251104_059",
+      "cauldron_id": "cauldron_005",
+      "amount_collected": 96.26,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-04"
+    },
+    {
+      "ticket_id": "TT_20251104_060",
+      "cauldron_id": "cauldron_008",
+      "amount_collected": 31.35,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-04"
+    },
+    {
+      "ticket_id": "TT_20251104_061",
+      "cauldron_id": "cauldron_006",
+      "amount_collected": 94.41,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-04"
+    },
+    {
+      "ticket_id": "TT_20251105_062",
+      "cauldron_id": "cauldron_004",
+      "amount_collected": 95.1,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-05"
+    },
+    {
+      "ticket_id": "TT_20251103_063",
+      "cauldron_id": "cauldron_011",
+      "amount_collected": 86.06,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-03"
+    },
+    {
+      "ticket_id": "TT_20251103_064",
+      "cauldron_id": "cauldron_007",
+      "amount_collected": 97.51,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-03"
+    },
+    {
+      "ticket_id": "TT_20251104_065",
+      "cauldron_id": "cauldron_001",
+      "amount_collected": 78.69,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-04"
+    },
+    {
+      "ticket_id": "TT_20251103_066",
+      "cauldron_id": "cauldron_009",
+      "amount_collected": 99.87,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-03"
+    },
+    {
+      "ticket_id": "TT_20251103_067",
+      "cauldron_id": "cauldron_011",
+      "amount_collected": 96.63,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-03"
+    },
+    {
+      "ticket_id": "TT_20251104_068",
+      "cauldron_id": "cauldron_009",
+      "amount_collected": 99.87,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-04"
+    },
+    {
+      "ticket_id": "TT_20251104_069",
+      "cauldron_id": "cauldron_003",
+      "amount_collected": 97.05,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-04"
+    },
+    {
+      "ticket_id": "TT_20251104_070",
+      "cauldron_id": "cauldron_007",
+      "amount_collected": 97.51,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-04"
+    },
+    {
+      "ticket_id": "TT_20251105_071",
+      "cauldron_id": "cauldron_011",
+      "amount_collected": 76.5,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-05"
+    },
+    {
+      "ticket_id": "TT_20251105_072",
+      "cauldron_id": "cauldron_010",
+      "amount_collected": 95.85,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-05"
+    },
+    {
+      "ticket_id": "TT_20251105_073",
+      "cauldron_id": "cauldron_001",
+      "amount_collected": 95.8,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-05"
+    },
+    {
+      "ticket_id": "TT_20251106_074",
+      "cauldron_id": "cauldron_012",
+      "amount_collected": 94.37,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-06"
+    },
+    {
+      "ticket_id": "TT_20251104_075",
+      "cauldron_id": "cauldron_009",
+      "amount_collected": 99.87,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-04"
+    },
+    {
+      "ticket_id": "TT_20251104_076",
+      "cauldron_id": "cauldron_002",
+      "amount_collected": 94.82,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-04"
+    },
+    {
+      "ticket_id": "TT_20251104_077",
+      "cauldron_id": "cauldron_009",
+      "amount_collected": 99.87,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-04"
+    },
+    {
+      "ticket_id": "TT_20251105_078",
+      "cauldron_id": "cauldron_003",
+      "amount_collected": 97.05,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-05"
+    },
+    {
+      "ticket_id": "TT_20251104_079",
+      "cauldron_id": "cauldron_005",
+      "amount_collected": 96.26,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-04"
+    },
+    {
+      "ticket_id": "TT_20251105_080",
+      "cauldron_id": "cauldron_002",
+      "amount_collected": 94.82,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-05"
+    },
+    {
+      "ticket_id": "TT_20251105_081",
+      "cauldron_id": "cauldron_007",
+      "amount_collected": 97.51,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-05"
+    },
+    {
+      "ticket_id": "TT_20251105_082",
+      "cauldron_id": "cauldron_008",
+      "amount_collected": 95.35,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-05"
+    },
+    {
+      "ticket_id": "TT_20251106_083",
+      "cauldron_id": "cauldron_009",
+      "amount_collected": 99.87,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-06"
+    },
+    {
+      "ticket_id": "TT_20251106_084",
+      "cauldron_id": "cauldron_006",
+      "amount_collected": 94.41,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-06"
+    },
+    {
+      "ticket_id": "TT_20251106_085",
+      "cauldron_id": "cauldron_005",
+      "amount_collected": 96.26,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-06"
+    },
+    {
+      "ticket_id": "TT_20251106_086",
+      "cauldron_id": "cauldron_003",
+      "amount_collected": 83.63,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-06"
+    },
+    {
+      "ticket_id": "TT_20251107_087",
+      "cauldron_id": "cauldron_004",
+      "amount_collected": 95.1,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-07"
+    },
+    {
+      "ticket_id": "TT_20251105_088",
+      "cauldron_id": "cauldron_002",
+      "amount_collected": 94.82,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-05"
+    },
+    {
+      "ticket_id": "TT_20251105_089",
+      "cauldron_id": "cauldron_002",
+      "amount_collected": 94.82,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-05"
+    },
+    {
+      "ticket_id": "TT_20251105_090",
+      "cauldron_id": "cauldron_011",
+      "amount_collected": 96.63,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-05"
+    },
+    {
+      "ticket_id": "TT_20251106_091",
+      "cauldron_id": "cauldron_007",
+      "amount_collected": 97.51,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-06"
+    },
+    {
+      "ticket_id": "TT_20251105_092",
+      "cauldron_id": "cauldron_002",
+      "amount_collected": 94.82,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-05"
+    },
+    {
+      "ticket_id": "TT_20251106_093",
+      "cauldron_id": "cauldron_010",
+      "amount_collected": 95.85,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-06"
+    },
+    {
+      "ticket_id": "TT_20251106_094",
+      "cauldron_id": "cauldron_008",
+      "amount_collected": 95.35,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-06"
+    },
+    {
+      "ticket_id": "TT_20251106_095",
+      "cauldron_id": "cauldron_001",
+      "amount_collected": 95.8,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-06"
+    },
+    {
+      "ticket_id": "TT_20251106_096",
+      "cauldron_id": "cauldron_011",
+      "amount_collected": 96.63,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-06"
+    },
+    {
+      "ticket_id": "TT_20251107_097",
+      "cauldron_id": "cauldron_002",
+      "amount_collected": 85.94,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-07"
+    },
+    {
+      "ticket_id": "TT_20251107_098",
+      "cauldron_id": "cauldron_012",
+      "amount_collected": 94.37,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-07"
+    },
+    {
+      "ticket_id": "TT_20251107_099",
+      "cauldron_id": "cauldron_010",
+      "amount_collected": 95.85,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-07"
+    },
+    {
+      "ticket_id": "TT_20251107_100",
+      "cauldron_id": "cauldron_007",
+      "amount_collected": 75.42,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-07"
+    },
+    {
+      "ticket_id": "TT_20251106_101",
+      "cauldron_id": "cauldron_009",
+      "amount_collected": 99.87,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-06"
+    },
+    {
+      "ticket_id": "TT_20251106_102",
+      "cauldron_id": "cauldron_008",
+      "amount_collected": 73.16,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-06"
+    },
+    {
+      "ticket_id": "TT_20251106_103",
+      "cauldron_id": "cauldron_009",
+      "amount_collected": 99.87,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-06"
+    },
+    {
+      "ticket_id": "TT_20251107_104",
+      "cauldron_id": "cauldron_006",
+      "amount_collected": 94.41,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-07"
+    },
+    {
+      "ticket_id": "TT_20251107_105",
+      "cauldron_id": "cauldron_001",
+      "amount_collected": 95.8,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-07"
+    },
+    {
+      "ticket_id": "TT_20251106_106",
+      "cauldron_id": "cauldron_008",
+      "amount_collected": 75.31,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-06"
+    },
+    {
+      "ticket_id": "TT_20251107_107",
+      "cauldron_id": "cauldron_005",
+      "amount_collected": 96.26,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-07"
+    },
+    {
+      "ticket_id": "TT_20251107_108",
+      "cauldron_id": "cauldron_011",
+      "amount_collected": 96.63,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-07"
+    },
+    {
+      "ticket_id": "TT_20251107_109",
+      "cauldron_id": "cauldron_009",
+      "amount_collected": 99.87,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-07"
+    },
+    {
+      "ticket_id": "TT_20251108_110",
+      "cauldron_id": "cauldron_003",
+      "amount_collected": 97.05,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-08"
+    },
+    {
+      "ticket_id": "TT_20251108_111",
+      "cauldron_id": "cauldron_008",
+      "amount_collected": 42.21,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-08"
+    },
+    {
+      "ticket_id": "TT_20251108_112",
+      "cauldron_id": "cauldron_006",
+      "amount_collected": 94.41,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-08"
+    },
+    {
+      "ticket_id": "TT_20251108_113",
+      "cauldron_id": "cauldron_004",
+      "amount_collected": 95.1,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-08"
+    },
+    {
+      "ticket_id": "TT_20251108_114",
+      "cauldron_id": "cauldron_005",
+      "amount_collected": 96.26,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-08"
+    },
+    {
+      "ticket_id": "TT_20251107_115",
+      "cauldron_id": "cauldron_001",
+      "amount_collected": 95.8,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-07"
+    },
+    {
+      "ticket_id": "TT_20251107_116",
+      "cauldron_id": "cauldron_002",
+      "amount_collected": 94.82,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-07"
+    },
+    {
+      "ticket_id": "TT_20251107_117",
+      "cauldron_id": "cauldron_011",
+      "amount_collected": 96.63,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-07"
+    },
+    {
+      "ticket_id": "TT_20251108_118",
+      "cauldron_id": "cauldron_001",
+      "amount_collected": 95.8,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-08"
+    },
+    {
+      "ticket_id": "TT_20251108_119",
+      "cauldron_id": "cauldron_012",
+      "amount_collected": 74.92,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-08"
+    },
+    {
+      "ticket_id": "TT_20251107_120",
+      "cauldron_id": "cauldron_009",
+      "amount_collected": 99.87,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-07"
+    },
+    {
+      "ticket_id": "TT_20251108_121",
+      "cauldron_id": "cauldron_002",
+      "amount_collected": 73.5,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-08"
+    },
+    {
+      "ticket_id": "TT_20251108_122",
+      "cauldron_id": "cauldron_010",
+      "amount_collected": 95.85,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-08"
+    },
+    {
+      "ticket_id": "TT_20251109_123",
+      "cauldron_id": "cauldron_007",
+      "amount_collected": 74.06,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-09"
+    },
+    {
+      "ticket_id": "TT_20251109_124",
+      "cauldron_id": "cauldron_009",
+      "amount_collected": 99.87,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-09"
+    },
+    {
+      "ticket_id": "TT_20251109_125",
+      "cauldron_id": "cauldron_011",
+      "amount_collected": 85.07,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-09"
+    },
+    {
+      "ticket_id": "TT_20251109_126",
+      "cauldron_id": "cauldron_003",
+      "amount_collected": 97.05,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-09"
+    },
+    {
+      "ticket_id": "TT_20251110_127",
+      "cauldron_id": "cauldron_002",
+      "amount_collected": 55.57,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-10"
+    },
+    {
+      "ticket_id": "TT_20251110_128",
+      "cauldron_id": "cauldron_001",
+      "amount_collected": 95.8,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-10"
+    },
+    {
+      "ticket_id": "TT_20251108_129",
+      "cauldron_id": "cauldron_008",
+      "amount_collected": 79.44,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-08"
+    },
+    {
+      "ticket_id": "TT_20251108_130",
+      "cauldron_id": "cauldron_010",
+      "amount_collected": 79.58,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-08"
+    },
+    {
+      "ticket_id": "TT_20251108_131",
+      "cauldron_id": "cauldron_012",
+      "amount_collected": 79.07,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-08"
+    },
+    {
+      "ticket_id": "TT_20251109_132",
+      "cauldron_id": "cauldron_006",
+      "amount_collected": 94.41,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-09"
+    },
+    {
+      "ticket_id": "TT_20251108_133",
+      "cauldron_id": "cauldron_008",
+      "amount_collected": 79.86,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-08"
+    },
+    {
+      "ticket_id": "TT_20251108_134",
+      "cauldron_id": "cauldron_004",
+      "amount_collected": 85.43,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-08"
+    },
+    {
+      "ticket_id": "TT_20251109_135",
+      "cauldron_id": "cauldron_008",
+      "amount_collected": 37.06,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-09"
+    },
+    {
+      "ticket_id": "TT_20251109_136",
+      "cauldron_id": "cauldron_010",
+      "amount_collected": 95.85,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-09"
+    },
+    {
+      "ticket_id": "TT_20251110_137",
+      "cauldron_id": "cauldron_004",
+      "amount_collected": 95.1,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-10"
+    },
+    {
+      "ticket_id": "TT_20251110_138",
+      "cauldron_id": "cauldron_005",
+      "amount_collected": 96.26,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-10"
+    },
+    {
+      "ticket_id": "TT_20251111_139",
+      "cauldron_id": "cauldron_012",
+      "amount_collected": 94.37,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-11"
+    },
+    {
+      "ticket_id": "TT_20251111_140",
+      "cauldron_id": "cauldron_008",
+      "amount_collected": 35.45,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-11"
+    },
+    {
+      "ticket_id": "TT_20251111_141",
+      "cauldron_id": "cauldron_006",
+      "amount_collected": 94.41,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-11"
+    },
+    {
+      "ticket_id": "TT_20251111_142",
+      "cauldron_id": "cauldron_007",
+      "amount_collected": 97.51,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-11"
+    },
+    {
+      "ticket_id": "TT_20251109_143",
+      "cauldron_id": "cauldron_010",
+      "amount_collected": 95.85,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-09"
+    },
+    {
+      "ticket_id": "TT_20251109_144",
+      "cauldron_id": "cauldron_010",
+      "amount_collected": 95.85,
+      "courier_id": "courier_witch_04",
+      "date": "2025-11-09"
+    },
+    {
+      "ticket_id": "TT_20251109_145",
+      "cauldron_id": "cauldron_009",
+      "amount_collected": 99.87,
+      "courier_id": "courier_witch_02",
+      "date": "2025-11-09"
+    },
+    {
+      "ticket_id": "TT_20251109_146",
+      "cauldron_id": "cauldron_010",
+      "amount_collected": 95.85,
+      "courier_id": "courier_witch_01",
+      "date": "2025-11-09"
+    },
+    {
+      "ticket_id": "TT_20251109_147",
+      "cauldron_id": "cauldron_011",
+      "amount_collected": 96.63,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-09"
+    },
+    {
+      "ticket_id": "TT_20251110_148",
+      "cauldron_id": "cauldron_010",
+      "amount_collected": 81.39,
+      "courier_id": "courier_witch_05",
+      "date": "2025-11-10"
+    },
+    {
+      "ticket_id": "TT_20251110_149",
+      "cauldron_id": "cauldron_009",
+      "amount_collected": 99.87,
+      "courier_id": "courier_witch_03",
+      "date": "2025-11-10"
+    }
+  ]
+}
