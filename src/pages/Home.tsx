@@ -17,6 +17,8 @@ import ten from "../assets/frontpage/ten.svg";
 import eleven from "../assets/frontpage/eleven.svg";
 import twelve from "../assets/frontpage/twelve.svg";
 import marketIcon from "../assets/frontpage/Market.svg";
+import WeekGraph from "../backend/weekGraph";
+import getCauldronRates from "../backend/useCauldronRates";
 
 /* ---------- Types ---------- */
 type BasePos = { id: string; x: number; y: number; icon: string };
@@ -155,6 +157,8 @@ export default function Home() {
 
   const [edges, setEdges] = useState<{ id: string; x1: number; y1: number; x2: number; y2: number }[]>([]);
   const [svgSize, setSvgSize] = useState<{ w: number; h: number }>({ w: 0, h: 0 });
+  const averageRates = getCauldronRates(levels);
+
 
   useEffect(() => {
     fetch("/seed/background_data.json")
@@ -174,12 +178,12 @@ export default function Home() {
         setNetEdges([]);
       });
 
-    fetch("/seed/data.json")
+    fetch("/api/Data/?start_date=0&end_date=1762629770")
       .then((r) => r.json())
       .then((j: LevelSnapshot[]) => setLevels(Array.isArray(j) ? j : []))
       .catch(() => setLevels([]));
 
-    fetch("/seed/ticket.json").catch(() => void 0);
+    fetch("/api/Tickets").catch(() => void 0);
   }, []);
 
   const CAULDRONS: Cauldron[] = useMemo(() => BASE_POS.map((b) => ({ ...b, ...metaMap[b.id] })), [metaMap]);
@@ -517,26 +521,39 @@ export default function Home() {
                 </div>
               </div>
             </div>
-
-            {/* Empty popup for Time graph */}
+p
+            {/* NOT Empty popup for Time graph ;) */}
             {showTimeGraph && (
-              <div className="modal-scrim" onClick={() => setShowTimeGraph(false)}>
-                <div className="modal-card" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
-                  <div className="modal-head modal-head--center">
-                    <button className="modal-close" onClick={() => setShowTimeGraph(false)} aria-label="Close">×</button>
-                    <div className="modal-title fancy">
-                      <div className="modal-name darker">
-                        <span className="spark">✦</span> Time Graph <span className="spark">✦</span>
-                      </div>
-                      <div className="title-rule"></div>
+            <div className="modal-scrim" onClick={() => setShowTimeGraph(false)}>
+              <div 
+                className="modal-card" 
+                onClick={(e) => e.stopPropagation()} 
+                role="dialog" 
+                aria-modal="true"
+                style={{ maxWidth: "600px", width: "90%" }}
+              >
+                <div className="modal-head modal-head--center">
+                  <button className="modal-close" onClick={() => setShowTimeGraph(false)} aria-label="Close">×</button>
+                  <div className="modal-title fancy">
+                    <div className="modal-name darker">
+                      <span className="spark">✦</span> Time Graph <span className="spark">✦</span>
                     </div>
-                  </div>
-                  <div style={{ padding: 24, minHeight: 260, display: "grid", placeItems: "center", opacity: .85 }}>
-                    (coming soon)
+                    <div className="title-rule"></div>
                   </div>
                 </div>
+                <div style={{ padding: 24 }}>
+                  <WeekGraph 
+                    cauldronName={selectedId} 
+                    averageRate={averageRates?.[selectedId]}
+                    startVolume={startVal}
+                    endVolume={endVal}
+                    startDate={firstSnap?.timestamp}
+                    endDate={lastSnap?.timestamp}
+                  />
+                </div>
               </div>
-            )}
+            </div>
+          )}
           </>
         );
       })()}
