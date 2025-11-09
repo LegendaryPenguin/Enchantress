@@ -41,6 +41,8 @@ export function useDiscrepancyCheck(cauldron){
         prev = cauldron_data[i - 1];
         curr = cauldron_data[i];
       }
+
+      if (lost_amount < 1) { continue; }
       
       // get all the tickets that match the dates
       const matching_tickets = cauldron_ticket_data.filter(
@@ -54,6 +56,8 @@ export function useDiscrepancyCheck(cauldron){
         if (!seenTickets.has(key)) {
           discrepancy_list.push({
             timestamp: prev.timestamp,
+            error_type: "Unlogged Potion Drain",
+            volume_diff: lost_amount,
             cauldron_id: cauldron,
             lost_amount,
             isDiscrepancy: true,
@@ -62,7 +66,7 @@ export function useDiscrepancyCheck(cauldron){
         }
       } else {
         const hasMatchingTicket = matching_tickets.some(
-          ticket => Math.abs(ticket.amount_collected - lost_amount) <= 10
+          ticket => Math.abs(ticket.amount_collected - lost_amount) <= 15
         );
 
         if (!hasMatchingTicket) {
@@ -73,6 +77,8 @@ export function useDiscrepancyCheck(cauldron){
               //discrepancy_list.push(ticket);
               discrepancy_list.push({
                 timestamp: prev.timestamp,
+                error_type: "Incorrect Potion Ticket",
+                volume_diff: lost_amount - ticket.amount_collected,
                 cauldron_id: cauldron,
                 lost_amount,
                 isDiscrepancy: true,
