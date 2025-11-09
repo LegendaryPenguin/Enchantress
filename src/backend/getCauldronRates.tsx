@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { from, pairwise, map, reduce } from 'rxjs';
 
 export default function getCauldronRates(data){
-  [averageRates, setAverageRates] = useState(null);
+  const [averageRates, setAverageRates] = useState(null);
   
   useEffect(() => {
     if (!data) return; 

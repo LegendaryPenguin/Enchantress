@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useData } from './backend/FetchContext';
 import './App.css'
-import { getCauldronRates } from './backend/getCauldronRates';
+import getCauldronRates from './backend/getCauldronRates';
 
 function Discrepency() {
-  [data, ticketData] = useData();
+  const {data, ticketData} = useData();
   const averageRates = getCauldronRates(data);
 
   if (!avgRates) return <p>Calculating cauldron rates...</p>;
