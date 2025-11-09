@@ -39,7 +39,7 @@ export function getDiscrepancyCheck(data, ticketData, cauldron){
         curr = cauldron_data[i];
       }
 
-      if (lost_amount < 1) { continue; }
+      if (lost_amount < 2) { continue; }
       
       // get all the tickets that match the dates
       const matching_tickets = cauldron_ticket_data.filter(
