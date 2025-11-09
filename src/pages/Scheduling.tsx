@@ -4,12 +4,15 @@ import { useData } from "../backend/FetchContext"
 import getForecast from "../backend/getForecast"
 import useCauldronRates from "../backend/useCauldronRates"
 import { useState, useEffect } from "react"
+import useWitchPath from "../backend/useWitchPath"
 
 export default function Scheduling() {
   const [forecastData, setForecastData] = useState({});
   const { data, ticketData } = useData();
 
   const averageRates = useCauldronRates(data); 
+
+  useWitchPath();
 
   useEffect(() => {
 
