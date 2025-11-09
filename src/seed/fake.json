@@ -18,7 +18,7 @@
     {"id":"cauldrone_012","name":"Jade Serenity Cauldron","max_volume":600}
   ],
   "days": [
-    {
+    {+++++++
       "date": "2025-10-30",
       "cauldrons": {
         "cauldrone_001": {
