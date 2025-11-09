@@ -21,6 +21,7 @@ export function useDiscrepancyCheck(cauldron){
   console.log(cauldron_ticket_data)
 
   const discrepancy_list = []; 
+  const seenTickets = new Set();
 
   for (let i = 1; i < cauldron_data.length; i++){
     let prev = cauldron_data[i - 1];
@@ -48,10 +49,7 @@ export function useDiscrepancyCheck(cauldron){
 
       console.log("matching_tickets: ", matching_tickets)
 
-      const seenTickets = new Set();
-
       if (matching_tickets.length === 0) {
-        // Condition 1: decrease without tickets
         const key = prev.timestamp + "_" + cauldron;
         if (!seenTickets.has(key)) {
           discrepancy_list.push({
@@ -68,7 +66,6 @@ export function useDiscrepancyCheck(cauldron){
         );
 
         if (!hasMatchingTicket) {
-          // none of the tickets match => mark all as discrepancies if not already
           matching_tickets.forEach(ticket => {
             if (ticket.isDiscrepancy === null) ticket.isDiscrepancy = true;
 
@@ -78,67 +75,14 @@ export function useDiscrepancyCheck(cauldron){
             }
           });
         } else {
-          // mark tickets that do match as not a discrepancy if not set yet
           matching_tickets.forEach(ticket => {
             if (ticket.isDiscrepancy === null) ticket.isDiscrepancy = false;
           });
         }
       }
-      /*if (matching_tickets.length === 0) {
-        // Condition 1: decrease happened but no tickets exist
-        discrepancy_list.push({
-          timestamp: prev.timestamp,
-          cauldron_id: cauldron,
-          lost_amount,
-          isDiscrepancy: true, 
-        });
-      }
-      else {
-        const hasMatchingTicket = matching_tickets.some(
-          ticket => Math.abs(ticket.amount_collected - lost_amount) <= 10
-        );
-
-        console.log("hasMatchingTicket", hasMatchingTicket)
-
-        if (!hasMatchingTicket) {
-
-          // none of the tickets match => mark all as discrepancies if not already
-          matching_tickets.forEach(ticket => {
-            if (ticket.isDiscrepancy === null) {
-              ticket.isDiscrepancy = true;
-            }
-            discrepancy_list.push(ticket);
-          });
-
-        } else {
-          // mark tickets that do match as not a discrepancy if not set yet
-          matching_tickets.forEach(ticket => {
-            if (ticket.isDiscrepancy === null) ticket.isDiscrepancy = false;
-          });
-        }*/
-      /*
-      matching_tickets.forEach(ticket => {
-        const diff = Math.abs(ticket.amount_collected - lost_amount);
-
-        if (diff > 10) {
-          if (ticket.isDiscrepancy === null){
-            console.log("lost_amount: ", lost_amount)
-            ticket.isDiscrepancy = true;  
-            discrepancy_list.push(ticket);
-          }
-        } else {
-          if (ticket.isDiscrepancy === null){
-            ticket.isDiscrepancy = false; 
-          }
-        }
-      });*/
-
-      // add to list of discrepencies
-  console.log("discrepancy list: ", discrepancy_list)
-  return discrepancy_list
-
     }
   }
-    }
-  
+
+  console.log("discrepancy list: ", discrepancy_list)
+  return discrepancy_list
 }
