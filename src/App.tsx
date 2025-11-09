@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Home from "./pages/Home";
 import Tracking from "./pages/Tracking";
 import Scheduling from "./pages/Scheduling";
+import Forecast from "./pages/Forecast";
 import WeekGraph from "./backend/weekGraph";
 import mapUrl from "./assets/Map.svg";
 import "./index.css";
@@ -23,6 +24,7 @@ export default function App() {
           </>
           } />
         <Route path="/scheduling" element={<Scheduling />} />
+        <Route path="/forecast" element={<Forecast />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       
