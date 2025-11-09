@@ -157,6 +157,8 @@ export default function Home() {
 
   const [edges, setEdges] = useState<{ id: string; x1: number; y1: number; x2: number; y2: number }[]>([]);
   const [svgSize, setSvgSize] = useState<{ w: number; h: number }>({ w: 0, h: 0 });
+  const averageRates = getCauldronRates(levels);
+
 
   useEffect(() => {
     fetch("/seed/background_data.json")
@@ -540,7 +542,14 @@ p
                   </div>
                 </div>
                 <div style={{ padding: 24 }}>
-                  <WeekGraph cauldronName={selectedId} />
+                  <WeekGraph 
+                    cauldronName={selectedId} 
+                    averageRate={averageRates?.[selectedId]}
+                    startVolume={startVal}
+                    endVolume={endVal}
+                    startDate={firstSnap?.timestamp}
+                    endDate={lastSnap?.timestamp}
+                  />
                 </div>
               </div>
             </div>
