@@ -18,7 +18,7 @@ import eleven from "../assets/frontpage/eleven.svg";
 import twelve from "../assets/frontpage/twelve.svg";
 import marketIcon from "../assets/frontpage/Market.svg";
 import WeekGraph from "../backend/weekGraph";
-import getCauldronRates from "../backend/getCauldronRates";
+import getCauldronRates from "../backend/useCauldronRates";
 
 /* ---------- Types ---------- */
 type BasePos = { id: string; x: number; y: number; icon: string };
