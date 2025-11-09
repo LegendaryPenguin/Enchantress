@@ -1,11 +1,12 @@
 // src/pages/Tracking.tsx
 import React, { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import explodeSvg from "../assets/second/explode.svg";
 import notexplodeSvg from "../assets/second/not_explode.svg";
+import menuSvg from "../assets/frontpage/menu.svg";
 import { useData } from "../backend/FetchContext";
 import { getDiscrepancyCheck } from "../backend/getDiscrepancyCheck";
 import bgTrack from "../assets/second/background_twoo.svg";
-
 
 /* ===== Types from discrepancy output ===== */
 type DiscEvent = {
@@ -17,13 +18,13 @@ type DiscEvent = {
 };
 type DiscMap = Record<string, DiscEvent[]>;
 
-/* ===== Helpers (LOCAL time, to match Home.tsx behavior) ===== */
+/* ===== Helpers (LOCAL time) ===== */
 const pad2 = (n: number) => String(n).padStart(2, "0");
+const localDateKey = (d: Date) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
 
 // Format a YYYY-MM-DD (interpreted as a local calendar day)
 function formatPrettyDate(isoYYYYMMDD: string) {
   const [y, m, d] = isoYYYYMMDD.split("-").map(Number);
-  // Construct at local midnight
   const dt = new Date((y ?? 1970), (m ?? 1) - 1, (d ?? 1));
   return dt.toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" });
 }
@@ -34,30 +35,25 @@ function formatTimeLocal(iso: string) {
   return dt.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
 }
 
-// Build inclusive range of YYYY-MM-DD *in local time* between two ISOs
-function buildDateRangeLocal(startISO: string, endISO: string): string[] {
-  const s = new Date(startISO);
-  const e = new Date(endISO);
-
-  // clamp to local midnights
-  const start = new Date(s.getFullYear(), s.getMonth(), s.getDate());
-  const end   = new Date(e.getFullYear(), e.getMonth(), e.getDate());
-
+// inclusive LOCAL range between two Dates
+function buildDateRangeLocal(start: Date, end: Date): string[] {
+  const s = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  const e = new Date(end.getFullYear(), end.getMonth(), end.getDate());
   const out: string[] = [];
-  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-    out.push(`${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`);
-  }
+  for (let d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) out.push(localDateKey(d));
   return out;
 }
 
-// Turn ISO -> local date key "YYYY-MM-DD" (NOT UTC)
+// Turn ISO -> local date key "YYYY-MM-DD"
 function tsToLocalDateKey(ts: string) {
   const d = new Date(ts);
-  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+  return localDateKey(d);
 }
 
 /* ===== Page ===== */
 export default function Tracking() {
+  const [openDrawer, setOpenDrawer] = useState(false);
+
   const { data, ticketData } = useData();
   const [discByCauldron, setDiscByCauldron] = useState<DiscMap>({});
   const [ready, setReady] = useState(false);
@@ -67,14 +63,7 @@ export default function Tracking() {
     return Object.keys(data[0]?.cauldron_levels ?? {}).sort();
   }, [data]);
 
-  // Date strip uses LOCAL calendar days (to mirror Home.tsx)
-  const dateList = useMemo<string[]>(() => {
-    if (!Array.isArray(data) || data.length === 0) return [];
-    const startISO = String(data[0].timestamp);
-    const endISO   = String(data[data.length - 1].timestamp);
-    return buildDateRangeLocal(startISO, endISO);
-  }, [data]);
-
+  // Load discrepancy events (accepts array or {discrepancies} map or per-cauldron)
   useEffect(() => {
     if (!Array.isArray(data) || data.length === 0) return;
 
@@ -84,12 +73,14 @@ export default function Tracking() {
       if (r?.discrepancies && typeof r.discrepancies === "object") {
         mapped = r.discrepancies as DiscMap;
       } else if (Array.isArray(r)) {
-        for (const ev of r as DiscEvent[]) (mapped[ev.cauldron_id] ||= []).push(ev);
+        const tmp: DiscMap = {};
+        for (const ev of r as DiscEvent[]) (tmp[ev.cauldron_id] ||= []).push(ev);
+        mapped = tmp;
       } else if (r && typeof r === "object") {
         mapped = r as DiscMap;
       }
 
-      // Fallback: per-cauldron calls
+      // Fallback per-cauldron if still empty
       if (Object.keys(mapped).length === 0 && cauldronIds.length) {
         const tmp: DiscMap = {};
         for (const id of cauldronIds) {
@@ -108,31 +99,73 @@ export default function Tracking() {
     setReady(true);
   }, [data, ticketData, cauldronIds]);
 
+  // Build date strip from earliest -> latest LOCAL day across telemetry + disc events
+  const dateList = useMemo<string[]>(() => {
+    if (!Array.isArray(data) || data.length === 0) return [];
+
+    const times: Date[] = [];
+    for (const row of data) times.push(new Date(String(row.timestamp)));
+    for (const id of Object.keys(discByCauldron)) {
+      for (const ev of discByCauldron[id]) times.push(new Date(ev.timestamp));
+    }
+    if (times.length === 0) return [];
+
+    times.sort((a, b) => a.getTime() - b.getTime());
+    const start = times[0];
+    const end = times[times.length - 1];
+    return buildDateRangeLocal(start, end);
+  }, [data, discByCauldron]);
+
   if (!ready) return <Screen>Loading…</Screen>;
   if (cauldronIds.length === 0 || dateList.length === 0) return <Screen>No data</Screen>;
 
   return (
     <div style={root}>
+      {/* ===== Menu + drawer (same pattern as Home.tsx) ===== */}
+      <button className="menu-btn" onClick={() => setOpenDrawer(true)} aria-label="Open menu" style={{ zIndex: 50 }}>
+        <img src={menuSvg} alt="" />
+      </button>
+      <div className={`scrim ${openDrawer ? "show" : ""}`} onClick={() => setOpenDrawer(false)} style={{ zIndex: 40 }} />
+      <aside className={`drawer ${openDrawer ? "open" : ""}`} role="dialog" aria-modal="true" style={{ zIndex: 45 }}>
+        <div className="drawer-header">
+          <span>Menu</span>
+          <button className="close" onClick={() => setOpenDrawer(false)} aria-label="Close">×</button>
+        </div>
+        <nav className="nav">
+          <Link to="/" onClick={() => setOpenDrawer(false)}>Home</Link>
+          <Link to="/tracking" onClick={() => setOpenDrawer(false)}>Tracking</Link>
+          <Link to="/scheduling" onClick={() => setOpenDrawer(false)}>Scheduling</Link>
+        </nav>
+      </aside>
+
+      {/* Inline CSS used by the menu & custom scrollbar */}
       <style>{`
-        .witchy-scroll{scrollbar-width:thin;scrollbar-color:#a78bfa1f transparent;}
-        .witchy-scroll::-webkit-scrollbar{width:10px;height:10px;}
-        .witchy-scroll::-webkit-scrollbar-track{
-          background:linear-gradient(180deg,rgba(167,139,250,0.10),rgba(59,7,100,0.14));
-          border-radius:999px;box-shadow:inset 0 0 6px rgba(0,0,0,0.35);}
-        .witchy-scroll::-webkit-scrollbar-thumb{
-          border-radius:999px;background:linear-gradient(180deg,#c084fc,#9333ea);
-          border:2px solid rgba(16,16,20,0.6);
-          box-shadow:0 0 10px rgba(168,85,247,0.55), inset 0 0 6px rgba(255,255,255,0.18);}
-        .witchy-scroll::-webkit-scrollbar-thumb:hover{
-          background:linear-gradient(180deg,#d8b4fe,#a855f7);
-          box-shadow:0 0 14px rgba(192,132,252,0.75), inset 0 0 8px rgba(255,255,255,0.22);}
-        .witchy-scroll::-webkit-scrollbar-corner{background:transparent;}
+        .menu-btn{position:absolute;top:16px;left:16px;width:44px;height:44px;padding:6px;border:none;border-radius:10px;background:rgba(255,255,255,.18);backdrop-filter:blur(2px);cursor:pointer;z-index:20;transition:all .2s}
+        .menu-btn:hover{background:rgba(255,255,255,.25);transform:scale(1.05)}
+        .menu-btn img{width:100%;height:100%;display:block}
+
+        .scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .2s}
+        .scrim.show{opacity:1;pointer-events:auto}
+        .drawer{position:fixed;top:0;left:0;bottom:0;width:280px;background:#17151B;transform:translateX(-100%);transition:transform .3s;border-right:1px solid #2a2338;box-shadow:4px 0 24px rgba(0,0,0,.25)}
+        .drawer.open{transform:translateX(0)}
+        .drawer-header{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid #2a2338;font-weight:700;font-size:18px;letter-spacing:.3px}
+        .drawer-header .close{border:none;background:none;color:inherit;font-size:24px;cursor:pointer;padding:8px;margin:-8px;opacity:.8}
+        .drawer-header .close:hover{opacity:1}
+        .nav{padding:12px 0}
+        .nav a{display:block;padding:12px 24px;color:inherit;text-decoration:none;font-weight:600;letter-spacing:.2px;transition:background-color .15s}
+        .nav a:hover{background:rgba(255,255,255,.05)}
+
+        .witchy-scroll{scrollbar-width:thin;scrollbar-color:#a78bfa1f transparent}
+        .witchy-scroll::-webkit-scrollbar{width:10px;height:10px}
+        .witchy-scroll::-webkit-scrollbar-track{background:linear-gradient(180deg,rgba(167,139,250,.10),rgba(59,7,100,.14));border-radius:999px;box-shadow:inset 0 0 6px rgba(0,0,0,.35)}
+        .witchy-scroll::-webkit-scrollbar-thumb{border-radius:999px;background:linear-gradient(180deg,#c084fc,#9333ea);border:2px solid rgba(16,16,20,.6);box-shadow:0 0 10px rgba(168,85,247,.55), inset 0 0 6px rgba(255,255,255,.18)}
+        .witchy-scroll::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#d8b4fe,#a855f7);box-shadow:0 0 14px rgba(192,132,252,.75), inset 0 0 8px rgba(255,255,255,.22)}
+        .witchy-scroll::-webkit-scrollbar-corner{background:transparent}
       `}</style>
 
       <div style={titleBox}>
-  <h1 style={title}>Daily Discrepancy Tracker</h1>
-</div>
-
+        <h1 style={title}>Daily Discrepancy Tracker</h1>
+      </div>
 
       <div style={rows} className="witchy-scroll">
         {cauldronIds.map((id) => (
@@ -144,12 +177,12 @@ export default function Tracking() {
               </div>
             </div>
 
-            {/* Horizontal strip of all days in range */}
+            {/* Per-cauldron horizontal scroller (first date fully visible; scroll to the right) */}
             <div style={daysScroller} className="witchy-scroll">
               <div style={daysStrip}>
                 {dateList.map((iso) => {
                   const events = (discByCauldron[id] || [])
-                    .filter((ev) => tsToLocalDateKey(ev.timestamp) === iso) // <-- LOCAL match
+                    .filter((ev) => tsToLocalDateKey(ev.timestamp) === iso)
                     .sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp));
                   return <DayCard key={`${id}-${iso}`} iso={iso} events={events} />;
                 })}
@@ -162,7 +195,7 @@ export default function Tracking() {
   );
 }
 
-/* ===== DayCard (back shows Δ + local time + error; no-disc still shows a line) ===== */
+/* ===== DayCard (back lists events; green shows “No discrepancies”) ===== */
 function DayCard({ iso, events }: { iso: string; events: DiscEvent[] }) {
   const [flipped, setFlipped] = useState(false);
   const [hovered, setHovered] = useState(false);
@@ -179,10 +212,7 @@ function DayCard({ iso, events }: { iso: string; events: DiscEvent[] }) {
 
   const onToggle = () => setFlipped((v) => !v);
   const onKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      onToggle();
-    }
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onToggle(); }
   };
 
   return (
@@ -203,6 +233,7 @@ function DayCard({ iso, events }: { iso: string; events: DiscEvent[] }) {
         transform: hovered ? "scale(1.06)" : "scale(1)",
         transition: "transform 160ms ease, box-shadow 160ms ease",
         willChange: "transform",
+        scrollSnapAlign: "start",
       }}
     >
       <div style={flipWrap}>
@@ -237,7 +268,6 @@ function DayCard({ iso, events }: { iso: string; events: DiscEvent[] }) {
                         minWidth: 0,
                       }}
                     >
-                      {/* Δ chip shows volume_diff */}
                       <div
                         style={{
                           padding: "6px 10px",
@@ -253,7 +283,6 @@ function DayCard({ iso, events }: { iso: string; events: DiscEvent[] }) {
                       >
                         Δ {ev.volume_diff.toFixed(2)}
                       </div>
-                      {/* time + error under the chip (LOCAL clock) */}
                       <div style={{ fontWeight: 800, fontSize: 13.5 }}>
                         {formatTimeLocal(ev.timestamp)} · {ev.error_type}
                       </div>
@@ -261,7 +290,6 @@ function DayCard({ iso, events }: { iso: string; events: DiscEvent[] }) {
                   ))}
                 </div>
               ) : (
-                // No events: still show a line
                 <div
                   style={{
                     padding: "10px 12px",
@@ -317,10 +345,10 @@ const root: React.CSSProperties = {
   position: "absolute",
   inset: 0,
 
-  // base color behind everything
+  // base color
   backgroundColor: "#0b0b0b",
 
-  // gradients first (drawn on top), image last (at the back)
+  // gradients + image
   backgroundImage: `
     radial-gradient(1000px 700px at -10% -10%, rgba(182,156,255,0.14), transparent 60%),
     radial-gradient(1000px 700px at 110% -10%, rgba(127,231,196,0.10), transparent 60%),
@@ -330,7 +358,6 @@ const root: React.CSSProperties = {
   backgroundPosition: "center, center, center",
   backgroundRepeat: "no-repeat, no-repeat, no-repeat",
 };
-
 
 const title: React.CSSProperties = {
   margin: 0,
@@ -373,6 +400,7 @@ const daysScroller: React.CSSProperties = {
   overflowX: "auto",
   overflowY: "hidden",
   paddingBottom: 6,
+  scrollPaddingLeft: 6,       // ensure first tile fully visible
 };
 
 const daysStrip: React.CSSProperties = {
@@ -381,6 +409,7 @@ const daysStrip: React.CSSProperties = {
   gridAutoColumns: "min(12.2vw, 156px)",
   gap: 10,
   alignItems: "start",
+  scrollSnapType: "x mandatory",
 };
 
 const outlineWrap: React.CSSProperties = {
@@ -402,7 +431,7 @@ const titleBox: React.CSSProperties = {
   display: "inline-block",
   padding: "8px 14px",
   borderRadius: 10,
-  background: "#0b0b0b",              // small black box
+  background: "#0b0b0b",
   border: "1px solid #2a2338",
   boxShadow: "0 8px 20px rgba(0,0,0,0.35)",
 };
