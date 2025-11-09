@@ -1,4 +1,6 @@
 // src/pages/Tracking.tsx
+import WeekGraph from "../backend/weekGraph";
+
 export default function Tracking() {
   return (
     <div

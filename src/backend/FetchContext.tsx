@@ -11,7 +11,6 @@ export function DataProvider({ children }) {
       try {
         const res = await fetch("/api/Data/?start_date=0&end_date=1762629770");
         const json = await res.json();
-        // console.log(json);
         setData(json);
       } catch (err) {
         console.error("Failed to fetch main data:", err);
