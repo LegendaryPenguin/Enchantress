@@ -5,7 +5,6 @@ export default function Tracking() {
   return (
     <div>
       <h1>Tracking Page</h1>
-      <WeekGraph cauldronName="cauldron_005" />
     </div>
   );
 }
