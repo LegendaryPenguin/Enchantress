@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { from, pairwise, map, reduce } from 'rxjs';
 
-export default function getCauldronRates(data){
+export default function useCauldronRates(data){
   const [averageRates, setAverageRates] = useState(null);
   
   useEffect(() => {
@@ -17,7 +17,9 @@ export default function getCauldronRates(data){
         const rates = {};
         for (const key of Object.keys(curr.cauldron_levels)) {
           const dLevel = curr.cauldron_levels[key] - prev.cauldron_levels[key];
-          rates[key] = dLevel / deltaMinutes;
+          if (dLevel > 0){
+            rates[key] = dLevel / deltaMinutes;
+          }
         }
 
         return rates; 
