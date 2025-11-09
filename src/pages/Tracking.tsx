@@ -2,6 +2,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import explodeSvg from "../assets/second/explode.svg";
 import notexplodeSvg from "../assets/second/not_explode.svg";
+import { useData } from "../backend/FetchContext"
+import { getDiscrepancyCheck } from "../backend/getDiscrepancyCheck"
 
 /* ===== Types ===== */
 type DayRecord = {
@@ -35,9 +37,26 @@ function formatPrettyDate(isoYYYYMMDD: string) {
 
 /* ===== Page ===== */
 export default function Tracking() {
-  const [data, setData] = useState<FakePayload | null>(null);
+  const [dataPayload, setDataPayload] = useState<FakePayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
+  const [cauldronData, setCauldronData] = useState({});
+  const { data, ticketData } = useData();
+
+  useEffect(() => {
+    const cauldronKeys = Object.keys(data[0].cauldron_levels);
+    console.log(cauldronKeys);
+
+    const newData: Record<string, any[]> = {};
+
+    cauldronKeys.forEach(cauldron => {
+      const discrepancies = getDiscrepancyCheck(data, ticketData, cauldron);
+      newData[cauldron] = discrepancies;
+    });
+
+    setCauldronData(newData);
+    
+  }, [data, ticketData]);
 
   useEffect(() => {
     (async () => {
@@ -82,7 +101,7 @@ export default function Tracking() {
           return { id: c.id, name: c.name, days } as CauldronDays;
         });
 
-        setData({ cauldrons });
+        setDataPayload({ cauldrons });
       } catch (e: any) {
         setErr(e?.message ?? "failed to load /seed/fake.json");
       } finally {
@@ -92,13 +111,13 @@ export default function Tracking() {
   }, []);
 
   const cauldrons = useMemo(() => {
-    if (!data) return [];
-    return [...data.cauldrons].sort((a, b) => a.id.localeCompare(b.id));
-  }, [data]);
+    if (!dataPayload) return [];
+    return [...dataPayload.cauldrons].sort((a, b) => a.id.localeCompare(b.id));
+  }, [dataPayload]);
 
   if (loading) return <Screen>Loading…</Screen>;
   if (err) return <Screen>Error: {err}</Screen>;
-  if (!data || cauldrons.length === 0) return <Screen>No data</Screen>;
+  if (!dataPayload || cauldrons.length === 0) return <Screen>No dataPayload</Screen>;
 
   return (
     <div style={root}>

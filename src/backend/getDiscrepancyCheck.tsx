@@ -1,8 +1,5 @@
-import { useState, useEffect } from "react";
-import { useData } from './FetchContext';
 
-export function useDiscrepancyCheck(cauldron){
-  const {data, ticketData} = useData();
+export function getDiscrepancyCheck(data, ticketData, cauldron){
   console.log(data);
   console.log("ticket data: ", ticketData);
   const cauldron_data = data.map(item => ({
