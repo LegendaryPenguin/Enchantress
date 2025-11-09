@@ -8,22 +8,10 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route 
-          path="/" 
-          element={
-            <main
-              style={{
-                position: "fixed",
-                inset: 0,
-                backgroundImage: `url(${mapUrl})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
-              }}
-            />
-          } 
-        />
-        <Route path="/stats" element={<StatsPage />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/tracking" element={<Tracking />} />
+        <Route path="/scheduling" element={<Scheduling />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
