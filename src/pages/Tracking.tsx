@@ -102,9 +102,45 @@ export default function Tracking() {
 
   return (
     <div style={root}>
+      {/* Witchy scrollbar styles (scoped via class) */}
+      <style>{`
+        .witchy-scroll {
+          scrollbar-width: thin;                      /* Firefox */
+          scrollbar-color: #a78bfa1f transparent;     /* thumb/track */
+        }
+        /* WebKit scrollbars */
+        .witchy-scroll::-webkit-scrollbar {
+          width: 10px;
+          height: 10px;
+        }
+        .witchy-scroll::-webkit-scrollbar-track {
+          background: linear-gradient(180deg, rgba(167,139,250,0.10), rgba(59,7,100,0.14));
+          border-radius: 999px;
+          box-shadow: inset 0 0 6px rgba(0,0,0,0.35);
+        }
+        .witchy-scroll::-webkit-scrollbar-thumb {
+          border-radius: 999px;
+          background: linear-gradient(180deg, #c084fc, #9333ea);
+          border: 2px solid rgba(16,16,20,0.6);
+          box-shadow:
+            0 0 10px rgba(168,85,247,0.55),
+            inset 0 0 6px rgba(255,255,255,0.18);
+          transition: background 160ms ease, box-shadow 160ms ease;
+        }
+        .witchy-scroll::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(180deg, #d8b4fe, #a855f7);
+          box-shadow:
+            0 0 14px rgba(192,132,252,0.75),
+            inset 0 0 8px rgba(255,255,255,0.22);
+        }
+        .witchy-scroll::-webkit-scrollbar-corner {
+          background: transparent;
+        }
+      `}</style>
+
       <h1 style={title}>Daily Discrepancy Tracker</h1>
 
-      <div style={rows}>
+      <div style={rows} className="witchy-scroll">
         {cauldrons.map((c) => (
           <div key={c.id} style={card}>
             <div style={cardHead}>
@@ -136,6 +172,7 @@ type DayCardProps = { iso: string; rec: DayRecord | undefined };
 
 function DayCard({ iso, rec }: DayCardProps) {
   const [flipped, setFlipped] = useState(false);
+  const [hovered, setHovered] = useState(false); // hover enlarge
   const isDisc = !!rec?.discrepancy;
   const iconSrc = isDisc ? explodeSvg : notexplodeSvg;
 
@@ -166,6 +203,8 @@ function DayCard({ iso, rec }: DayCardProps) {
       type="button"
       onClick={onToggle}
       onKeyDown={onKeyDown}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       aria-pressed={flipped}
       aria-label={`Details for ${pretty}`}
       style={{
@@ -174,6 +213,9 @@ function DayCard({ iso, rec }: DayCardProps) {
         ...outlineWrap,
         border: outlineColor,    // persistent outline
         boxShadow,               // depth both sides
+        transform: hovered ? "scale(1.06)" : "scale(1)",
+        transition: "transform 160ms ease, box-shadow 160ms ease",
+        willChange: "transform",
       }}
     >
       <div style={flipWrap}>
@@ -390,7 +432,7 @@ const iconImg: React.CSSProperties = {
 /* Date pill (cleaner look), shifted further upward */
 const datePillWrap: React.CSSProperties = {
   position: "absolute",
-  bottom: 34,                  // ↑ moved up more
+  bottom: 31,                  // ↑ moved up more
   left: "50%",
   transform: "translateX(-50%)",
   display: "grid",
