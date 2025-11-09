@@ -2,184 +2,158 @@
 import React, { useEffect, useMemo, useState } from "react";
 import explodeSvg from "../assets/second/explode.svg";
 import notexplodeSvg from "../assets/second/not_explode.svg";
-import { useData } from "../backend/FetchContext"
-import { getDiscrepancyCheck } from "../backend/getDiscrepancyCheck"
+import { useData } from "../backend/FetchContext";
+import { getDiscrepancyCheck } from "../backend/getDiscrepancyCheck";
+import bgTrack from "../assets/second/background_twoo.svg";
 
-/* ===== Types ===== */
-type DayRecord = {
-  date: string;          // "YYYY-MM-DD"
-  ticket_id: string;
+
+/* ===== Types from discrepancy output ===== */
+type DiscEvent = {
+  timestamp: string;        // ISO
+  error_type: string;
+  volume_diff: number;
   cauldron_id: string;
-  ticket_volume: number;
-  drain_volume: number;
-  delta: number;
-  discrepancy: boolean;
+  lost_amount: number;
 };
+type DiscMap = Record<string, DiscEvent[]>;
 
-type CauldronDays = {
-  id: string;
-  name?: string;
-  days: DayRecord[];
-};
+/* ===== Helpers (LOCAL time, to match Home.tsx behavior) ===== */
+const pad2 = (n: number) => String(n).padStart(2, "0");
 
-type FakePayload = { cauldrons: CauldronDays[] };
-
-/* ===== Helpers ===== */
+// Format a YYYY-MM-DD (interpreted as a local calendar day)
 function formatPrettyDate(isoYYYYMMDD: string) {
   const [y, m, d] = isoYYYYMMDD.split("-").map(Number);
-  const dt = new Date(y, (m ?? 1) - 1, d ?? 1); // construct from parts to avoid TZ drift
-  return dt.toLocaleDateString(undefined, {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+  // Construct at local midnight
+  const dt = new Date((y ?? 1970), (m ?? 1) - 1, (d ?? 1));
+  return dt.toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" });
+}
+
+// Format a timestamp as local time (e.g., "07:58 PM")
+function formatTimeLocal(iso: string) {
+  const dt = new Date(iso);
+  return dt.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+}
+
+// Build inclusive range of YYYY-MM-DD *in local time* between two ISOs
+function buildDateRangeLocal(startISO: string, endISO: string): string[] {
+  const s = new Date(startISO);
+  const e = new Date(endISO);
+
+  // clamp to local midnights
+  const start = new Date(s.getFullYear(), s.getMonth(), s.getDate());
+  const end   = new Date(e.getFullYear(), e.getMonth(), e.getDate());
+
+  const out: string[] = [];
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    out.push(`${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`);
+  }
+  return out;
+}
+
+// Turn ISO -> local date key "YYYY-MM-DD" (NOT UTC)
+function tsToLocalDateKey(ts: string) {
+  const d = new Date(ts);
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
 }
 
 /* ===== Page ===== */
 export default function Tracking() {
-  const [dataPayload, setDataPayload] = useState<FakePayload | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState<string | null>(null);
-  const [cauldronData, setCauldronData] = useState({});
   const { data, ticketData } = useData();
+  const [discByCauldron, setDiscByCauldron] = useState<DiscMap>({});
+  const [ready, setReady] = useState(false);
+
+  const cauldronIds = useMemo<string[]>(() => {
+    if (!Array.isArray(data) || data.length === 0) return [];
+    return Object.keys(data[0]?.cauldron_levels ?? {}).sort();
+  }, [data]);
+
+  // Date strip uses LOCAL calendar days (to mirror Home.tsx)
+  const dateList = useMemo<string[]>(() => {
+    if (!Array.isArray(data) || data.length === 0) return [];
+    const startISO = String(data[0].timestamp);
+    const endISO   = String(data[data.length - 1].timestamp);
+    return buildDateRangeLocal(startISO, endISO);
+  }, [data]);
 
   useEffect(() => {
-    const cauldronKeys = Object.keys(data[0].cauldron_levels);
-    console.log(cauldronKeys);
+    if (!Array.isArray(data) || data.length === 0) return;
 
-    const newData: Record<string, any[]> = {};
-
-    cauldronKeys.forEach(cauldron => {
-      const discrepancies = getDiscrepancyCheck(data, ticketData, cauldron);
-      newData[cauldron] = discrepancies;
-    });
-    
-    console.log("discrepancies: ", newData);
-    console.log("cauldron general data: ", data);
-    setCauldronData(newData);
-    
-  }, [data, ticketData]);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        // public/seed/fake.json
-        const res = await fetch("/seed/fake.json", { cache: "no-store" });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const raw = await res.json();
-
-        const tol =
-          (raw?.metadata?.tolerance_liters as number | undefined) ?? 0.5;
-
-        const cauldrons: CauldronDays[] = raw.cauldrons.map((c: any) => {
-          const days: DayRecord[] = (raw.days ?? [])
-            .map((d: any) => {
-              const bucket =
-                d.cauldrons?.[c.id] ??
-                d.cauldrons?.[c.id?.replace("cauldron", "cauldrone")];
-              if (!bucket) return null;
-
-              const ticket = bucket.tickets?.[0];
-              const drain = bucket.drains?.[0];
-              if (!ticket || !drain) return null;
-
-              const drainVol =
-                Number(drain.level_before ?? 0) - Number(drain.level_after ?? 0);
-              const ticketVol = Number(ticket.amount_collected ?? 0);
-              const delta = ticketVol - drainVol;
-
-              return {
-                date: String(d.date).slice(0, 10),
-                ticket_id: String(ticket.ticket_id),
-                cauldron_id: String(c.id),
-                ticket_volume: ticketVol,
-                drain_volume: drainVol,
-                delta,
-                discrepancy: Math.abs(delta) > tol,
-              } as DayRecord;
-            })
-            .filter(Boolean) as DayRecord[];
-
-          return { id: c.id, name: c.name, days } as CauldronDays;
-        });
-
-        setDataPayload({ cauldrons });
-      } catch (e: any) {
-        setErr(e?.message ?? "failed to load /seed/fake.json");
-      } finally {
-        setLoading(false);
+    let mapped: DiscMap = {};
+    try {
+      const r: any = getDiscrepancyCheck(data, ticketData);
+      if (r?.discrepancies && typeof r.discrepancies === "object") {
+        mapped = r.discrepancies as DiscMap;
+      } else if (Array.isArray(r)) {
+        for (const ev of r as DiscEvent[]) (mapped[ev.cauldron_id] ||= []).push(ev);
+      } else if (r && typeof r === "object") {
+        mapped = r as DiscMap;
       }
-    })();
-  }, []);
 
-  const cauldrons = useMemo(() => {
-    if (!dataPayload) return [];
-    return [...dataPayload.cauldrons].sort((a, b) => a.id.localeCompare(b.id));
-  }, [dataPayload]);
+      // Fallback: per-cauldron calls
+      if (Object.keys(mapped).length === 0 && cauldronIds.length) {
+        const tmp: DiscMap = {};
+        for (const id of cauldronIds) {
+          const x: any = getDiscrepancyCheck(data, ticketData, id);
+          if (Array.isArray(x)) tmp[id] = x as DiscEvent[];
+          else if (x?.discrepancies?.[id]) tmp[id] = x.discrepancies[id] as DiscEvent[];
+          else tmp[id] = [];
+        }
+        mapped = tmp;
+      }
+    } catch {
+      mapped = {};
+    }
 
-  if (loading) return <Screen>Loading…</Screen>;
-  if (err) return <Screen>Error: {err}</Screen>;
-  if (!dataPayload || cauldrons.length === 0) return <Screen>No dataPayload</Screen>;
+    setDiscByCauldron(mapped);
+    setReady(true);
+  }, [data, ticketData, cauldronIds]);
+
+  if (!ready) return <Screen>Loading…</Screen>;
+  if (cauldronIds.length === 0 || dateList.length === 0) return <Screen>No data</Screen>;
 
   return (
     <div style={root}>
-      {/* Witchy scrollbar styles (scoped via class) */}
       <style>{`
-        .witchy-scroll {
-          scrollbar-width: thin;                      /* Firefox */
-          scrollbar-color: #a78bfa1f transparent;     /* thumb/track */
-        }
-        /* WebKit scrollbars */
-        .witchy-scroll::-webkit-scrollbar {
-          width: 10px;
-          height: 10px;
-        }
-        .witchy-scroll::-webkit-scrollbar-track {
-          background: linear-gradient(180deg, rgba(167,139,250,0.10), rgba(59,7,100,0.14));
-          border-radius: 999px;
-          box-shadow: inset 0 0 6px rgba(0,0,0,0.35);
-        }
-        .witchy-scroll::-webkit-scrollbar-thumb {
-          border-radius: 999px;
-          background: linear-gradient(180deg, #c084fc, #9333ea);
-          border: 2px solid rgba(16,16,20,0.6);
-          box-shadow:
-            0 0 10px rgba(168,85,247,0.55),
-            inset 0 0 6px rgba(255,255,255,0.18);
-          transition: background 160ms ease, box-shadow 160ms ease;
-        }
-        .witchy-scroll::-webkit-scrollbar-thumb:hover {
-          background: linear-gradient(180deg, #d8b4fe, #a855f7);
-          box-shadow:
-            0 0 14px rgba(192,132,252,0.75),
-            inset 0 0 8px rgba(255,255,255,0.22);
-        }
-        .witchy-scroll::-webkit-scrollbar-corner {
-          background: transparent;
-        }
+        .witchy-scroll{scrollbar-width:thin;scrollbar-color:#a78bfa1f transparent;}
+        .witchy-scroll::-webkit-scrollbar{width:10px;height:10px;}
+        .witchy-scroll::-webkit-scrollbar-track{
+          background:linear-gradient(180deg,rgba(167,139,250,0.10),rgba(59,7,100,0.14));
+          border-radius:999px;box-shadow:inset 0 0 6px rgba(0,0,0,0.35);}
+        .witchy-scroll::-webkit-scrollbar-thumb{
+          border-radius:999px;background:linear-gradient(180deg,#c084fc,#9333ea);
+          border:2px solid rgba(16,16,20,0.6);
+          box-shadow:0 0 10px rgba(168,85,247,0.55), inset 0 0 6px rgba(255,255,255,0.18);}
+        .witchy-scroll::-webkit-scrollbar-thumb:hover{
+          background:linear-gradient(180deg,#d8b4fe,#a855f7);
+          box-shadow:0 0 14px rgba(192,132,252,0.75), inset 0 0 8px rgba(255,255,255,0.22);}
+        .witchy-scroll::-webkit-scrollbar-corner{background:transparent;}
       `}</style>
 
-      <h1 style={title}>Daily Discrepancy Tracker</h1>
+      <div style={titleBox}>
+  <h1 style={title}>Daily Discrepancy Tracker</h1>
+</div>
+
 
       <div style={rows} className="witchy-scroll">
-        {cauldrons.map((c) => (
-          <div key={c.id} style={card}>
+        {cauldronIds.map((id) => (
+          <div key={id} style={card}>
             <div style={cardHead}>
-              <div style={{ fontWeight: 700, letterSpacing: 0.2 }}>
-                {c.name ?? c.id}
+              <div style={{ fontWeight: 700, letterSpacing: 0.2 }}>{id}</div>
+              <div style={{ opacity: 0.7, fontSize: 12 }}>
+                {dateList[0]} → {dateList[dateList.length - 1]}
               </div>
-              <div style={{ opacity: 0.7, fontSize: 12 }}>{c.id}</div>
             </div>
 
-            {/* 7 responsive squares; no horizontal scroll */}
-            <div style={daysGrid}>
-              {Array.from({ length: 7 }).map((_, i) => {
-                const d = new Date();
-                d.setDate(d.getDate() - (6 - i));
-                const iso = d.toISOString().slice(0, 10);
-                const rec = c.days.find((x) => x.date === iso);
-                return <DayCard key={`${c.id}-${iso}`} iso={iso} rec={rec} />;
-              })}
+            {/* Horizontal strip of all days in range */}
+            <div style={daysScroller} className="witchy-scroll">
+              <div style={daysStrip}>
+                {dateList.map((iso) => {
+                  const events = (discByCauldron[id] || [])
+                    .filter((ev) => tsToLocalDateKey(ev.timestamp) === iso) // <-- LOCAL match
+                    .sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp));
+                  return <DayCard key={`${id}-${iso}`} iso={iso} events={events} />;
+                })}
+              </div>
             </div>
           </div>
         ))}
@@ -188,27 +162,19 @@ export default function Tracking() {
   );
 }
 
-/* ===== DayCard (entire card flips; outline persists) ===== */
-type DayCardProps = { iso: string; rec: DayRecord | undefined };
-
-function DayCard({ iso, rec }: DayCardProps) {
+/* ===== DayCard (back shows Δ + local time + error; no-disc still shows a line) ===== */
+function DayCard({ iso, events }: { iso: string; events: DiscEvent[] }) {
   const [flipped, setFlipped] = useState(false);
-  const [hovered, setHovered] = useState(false); // hover enlarge
-  const isDisc = !!rec?.discrepancy;
-  const iconSrc = isDisc ? explodeSvg : notexplodeSvg;
+  const [hovered, setHovered] = useState(false);
+  const hasDisc = events.length > 0;
+  const iconSrc = hasDisc ? explodeSvg : notexplodeSvg;
 
-  const outlineColor = isDisc
+  const outlineColor = hasDisc
     ? "2px solid rgba(246,115,185,0.72)"
     : "2px solid rgba(150,242,215,0.60)";
-
-  const boxShadow = isDisc
+  const boxShadow = hasDisc
     ? "0 8px 18px rgba(246,115,185,0.18), 0 2px 6px rgba(246,115,185,0.22)"
     : "0 8px 18px rgba(150,242,215,0.10), 0 2px 6px rgba(150,242,215,0.16)";
-
-  const deltaBg = isDisc
-    ? "linear-gradient(180deg,#FFAFF1,#F673B9)"
-    : "linear-gradient(180deg,#A6F7E3,#7FE7C4)";
-
   const pretty = formatPrettyDate(iso);
 
   const onToggle = () => setFlipped((v) => !v);
@@ -232,28 +198,19 @@ function DayCard({ iso, rec }: DayCardProps) {
         all: "unset",
         cursor: "pointer",
         ...outlineWrap,
-        border: outlineColor,    // persistent outline
-        boxShadow,               // depth both sides
+        border: outlineColor,
+        boxShadow,
         transform: hovered ? "scale(1.06)" : "scale(1)",
         transition: "transform 160ms ease, box-shadow 160ms ease",
         willChange: "transform",
       }}
     >
       <div style={flipWrap}>
-        <div
-          style={{
-            ...flipInner,
-            transform: flipped ? "rotateY(180deg)" : "none",
-          }}
-        >
-          {/* Front: image + elevated date pill (both hidden on back) */}
+        <div style={{ ...flipInner, transform: flipped ? "rotateY(180deg)" : "none" }}>
+          {/* Front */}
           <div style={frontFace}>
             <div style={frontCenter}>
-              <img
-                src={iconSrc}
-                alt={isDisc ? "discrepancy" : "ok"}
-                style={iconImg}
-              />
+              <img src={iconSrc} alt={hasDisc ? "discrepancy" : "ok"} style={iconImg} />
               <div style={datePillWrap}>
                 <div style={{ position: "relative" }}>
                   <div style={dateHalo} />
@@ -263,34 +220,62 @@ function DayCard({ iso, rec }: DayCardProps) {
             </div>
           </div>
 
-          {/* Back: solid info face only */}
+          {/* Back */}
           <div style={backFace}>
             <div style={backBody}>
-              {rec ? (
-                <>
-                  <div
-                    style={{
-                      ...chip,
-                      background: deltaBg,
-                      color: "#131318",
-                      fontSize: 14,
-                    }}
-                  >
-                    Δ {rec.delta.toFixed(2)}
-                  </div>
-                  <div style={backRowBig}>Ticket: {rec.ticket_id}</div>
-                  <div style={backRowBig}>
-                    Ticket Vol: {rec.ticket_volume.toFixed(2)}
-                  </div>
-                  <div style={backRowBig}>
-                    Drain Vol: {rec.drain_volume.toFixed(2)}
-                  </div>
-                  <div style={{ ...backRowBig, opacity: 0.85 }}>
-                    Status: {rec.discrepancy ? "Discrepancy" : "OK"}
-                  </div>
-                </>
+              {hasDisc ? (
+                <div style={{ display: "grid", gap: 8, maxHeight: 180, overflowY: "auto" }} className="witchy-scroll">
+                  {events.map((ev, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        padding: "8px 10px",
+                        borderRadius: 10,
+                        background: "rgba(255,255,255,0.06)",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                        textAlign: "left",
+                        minWidth: 0,
+                      }}
+                    >
+                      {/* Δ chip shows volume_diff */}
+                      <div
+                        style={{
+                          padding: "6px 10px",
+                          borderRadius: 999,
+                          fontWeight: 800,
+                          fontSize: 13,
+                          boxShadow: "0 2px 10px rgba(0,0,0,0.35)",
+                          background: "linear-gradient(180deg,#FFAFF1,#F673B9)",
+                          color: "#131318",
+                          width: "fit-content",
+                          marginBottom: 6,
+                        }}
+                      >
+                        Δ {ev.volume_diff.toFixed(2)}
+                      </div>
+                      {/* time + error under the chip (LOCAL clock) */}
+                      <div style={{ fontWeight: 800, fontSize: 13.5 }}>
+                        {formatTimeLocal(ev.timestamp)} · {ev.error_type}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               ) : (
-                <div style={{ ...backRowBig, opacity: 0.85 }}>No record</div>
+                // No events: still show a line
+                <div
+                  style={{
+                    padding: "10px 12px",
+                    borderRadius: 10,
+                    background: "rgba(255,255,255,0.06)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    textAlign: "center",
+                    minWidth: 0,
+                  }}
+                >
+                  <div style={{ fontWeight: 800, fontSize: 13.5 }}>
+                    — — · No discrepancies
+                  </div>
+                </div>
               )}
             </div>
             <div style={backFooter}>Click to flip back</div>
@@ -320,8 +305,6 @@ function Screen({ children }: { children: React.ReactNode }) {
 }
 
 /* ---------- styles ---------- */
-
-/* Root layout */
 const root: React.CSSProperties = {
   minHeight: "100vh",
   color: "white",
@@ -333,14 +316,25 @@ const root: React.CSSProperties = {
   boxSizing: "border-box",
   position: "absolute",
   inset: 0,
-  background:
-    "radial-gradient(1000px 700px at -10% -10%, rgba(182,156,255,0.14), transparent 60%), " +
-    "radial-gradient(1000px 700px at 110% -10%, rgba(127,231,196,0.10), transparent 60%), " +
-    "#0b0b0b",
+
+  // base color behind everything
+  backgroundColor: "#0b0b0b",
+
+  // gradients first (drawn on top), image last (at the back)
+  backgroundImage: `
+    radial-gradient(1000px 700px at -10% -10%, rgba(182,156,255,0.14), transparent 60%),
+    radial-gradient(1000px 700px at 110% -10%, rgba(127,231,196,0.10), transparent 60%),
+    url(${bgTrack})
+  `,
+  backgroundSize: "cover, cover, cover",
+  backgroundPosition: "center, center, center",
+  backgroundRepeat: "no-repeat, no-repeat, no-repeat",
 };
+
 
 const title: React.CSSProperties = {
   margin: 0,
+  color: "black",
   fontSize: 34,
   lineHeight: 1.15,
   background: "linear-gradient(180deg,#FFFFFF,#D8D8EE)",
@@ -375,21 +369,23 @@ const cardHead: React.CSSProperties = {
   color: "#EDEAF9",
 };
 
-/**
- * 7 columns that always fit: each square uses a responsive width based on viewport.
- * Using aspectRatio keeps them perfectly square. No minWidth => no horizontal scroll.
- */
-const daysGrid: React.CSSProperties = {
+const daysScroller: React.CSSProperties = {
+  overflowX: "auto",
+  overflowY: "hidden",
+  paddingBottom: 6,
+};
+
+const daysStrip: React.CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "repeat(7, 1fr)",
+  gridAutoFlow: "column",
+  gridAutoColumns: "min(12.2vw, 156px)",
   gap: 10,
   alignItems: "start",
 };
 
-/* Outline wrapper: persistent border, square sizing via responsive width */
 const outlineWrap: React.CSSProperties = {
   position: "relative",
-  width: "min(12.2vw, 156px)",   // slightly smaller container => fits 7 across
+  width: "min(12.2vw, 156px)",
   aspectRatio: "1 / 1",
   borderRadius: 14,
 };
@@ -400,6 +396,15 @@ const flipWrap: React.CSSProperties = {
   perspective: "1000px",
   borderRadius: 14,
   overflow: "hidden",
+};
+
+const titleBox: React.CSSProperties = {
+  display: "inline-block",
+  padding: "8px 14px",
+  borderRadius: 10,
+  background: "#0b0b0b",              // small black box
+  border: "1px solid #2a2338",
+  boxShadow: "0 8px 20px rgba(0,0,0,0.35)",
 };
 
 const flipInner: React.CSSProperties = {
@@ -441,19 +446,17 @@ const frontCenter: React.CSSProperties = {
   placeItems: "center",
 };
 
-/* Make the icon visually big and shifted upward */
 const iconImg: React.CSSProperties = {
   width: "94%",
   height: "94%",
   objectFit: "contain",
-  transform: "translateY(-18px)", // ↑ moved up more
+  transform: "translateY(-18px)",
   filter: "drop-shadow(0 6px 14px rgba(0,0,0,0.35))",
 };
 
-/* Date pill (cleaner look), shifted further upward */
 const datePillWrap: React.CSSProperties = {
   position: "absolute",
-  bottom: 31,                  // ↑ moved up more
+  bottom: 31,
   left: "50%",
   transform: "translateX(-50%)",
   display: "grid",
@@ -478,18 +481,8 @@ const dateHalo: React.CSSProperties = {
   position: "absolute",
   inset: -3,
   borderRadius: 999,
-  background:
-    "radial-gradient(60% 120% at 50% 50%, rgba(168, 85, 247, 0.28), rgba(99,102,241,0.00))",
+  background: "radial-gradient(60% 120% at 50% 50%, rgba(168, 85, 247, 0.28), rgba(99,102,241,0.00))",
   pointerEvents: "none",
-};
-
-const chip: React.CSSProperties = {
-  padding: "6px 10px",
-  borderRadius: 999,
-  fontWeight: 800,
-  fontSize: 12,
-  letterSpacing: 0.2,
-  boxShadow: "0 2px 10px rgba(0,0,0,0.35)",
 };
 
 const backBody: React.CSSProperties = {
@@ -499,13 +492,6 @@ const backBody: React.CSSProperties = {
   justifyItems: "center",
   gap: 8,
   textAlign: "center",
-};
-
-const backRowBig: React.CSSProperties = {
-  fontSize: 15.5,
-  lineHeight: 1.28,
-  opacity: 0.96,
-  letterSpacing: 0.2,
 };
 
 const backFooter: React.CSSProperties = {
