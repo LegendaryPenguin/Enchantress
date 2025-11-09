@@ -359,3 +359,367 @@ button:focus-visible {
   .meter-row--icon { grid-template-columns: 90px 1fr; }
   .mini img { width: clamp(40px, 9vw, 64px); }
 }
+
+/* ===== Witchland theme ===== */
+:root {
+  --witch-ink: #0b1020;
+  --witch-cream: rgba(255, 252, 244, 0.94);
+  --witch-deep: rgba(17, 24, 39, 0.94);
+  --witch-purple: #8B5CF6;
+  --witch-purple-deep: #6D28D9;
+  --witch-lav: #E9D5FF;
+  --witch-rune: #E879F9;        /* softer than bright red */
+  --witch-gold: #FDE68A;
+}
+
+.witch .modal-name { font-family: "Cinzel", serif; letter-spacing:.3px; }
+body { font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+
+/* Parchment + vignette + star specks */
+.modal-card.witch {
+  position: relative;
+  background: var(--witch-cream);
+  color: var(--witch-ink);
+}
+@media (prefers-color-scheme: dark) {
+  .modal-card.witch { background: var(--witch-deep); color: #F8FAFC; }
+}
+
+.modal-card.witch::before {
+  /* parchment grain */
+  content:"";
+  position:absolute; inset:0;
+  background:
+    radial-gradient( circle at 20% 15%, rgba(0,0,0,.06), transparent 40% ),
+    radial-gradient( circle at 80% 80%, rgba(0,0,0,.04), transparent 45% ),
+    repeating-linear-gradient(0deg, rgba(0,0,0,.02), rgba(0,0,0,.02) 2px, transparent 3px, transparent 8px);
+  mix-blend-mode: multiply;
+  pointer-events:none;
+  opacity:.45;
+}
+.modal-card.witch::after {
+  /* soft vignette + star specks */
+  content:"";
+  position:absolute; inset:-2px;
+  background:
+    radial-gradient(transparent 55%, rgba(0,0,0,.15) 90%),
+    radial-gradient(2px 2px at 12% 18%, rgba(255,255,255,.7), transparent 60%),
+    radial-gradient(1.5px 1.5px at 78% 24%, rgba(255,255,255,.6), transparent 60%),
+    radial-gradient(1.7px 1.7px at 35% 72%, rgba(255,255,255,.5), transparent 60%);
+  pointer-events:none;
+}
+
+/* Header accent */
+.modal-head { backdrop-filter: blur(2px); }
+.modal-sub { opacity:.75; }
+
+/* Mini cauldron chip */
+.meter-row--icon .mini img {
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,.35));
+}
+.mini-caption {
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing:.3px;
+}
+
+/* Potion vial meter */
+.meter {
+  height: 44px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.08));
+  border: 1px solid rgba(0,0,0,.12);
+  position: relative;
+  overflow: hidden;
+}
+@media (prefers-color-scheme: dark) {
+  .meter { background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.08)); border-color: rgba(255,255,255,.12); }
+}
+
+/* Fill = glowing potion with shimmer */
+.meter-fill {
+  position: absolute; left:0; top:0; bottom:0;
+  background: linear-gradient(180deg, var(--witch-purple), var(--witch-purple-deep) 70%);
+  box-shadow: 0 0 24px rgba(139,92,246,.45) inset, 0 0 20px rgba(139,92,246,.35);
+  transition: width .3s ease;
+}
+.meter-fill::before {
+  /* shimmer */
+  content:"";
+  position:absolute; top:0; bottom:0; left:-30%;
+  width:30%;
+  background: linear-gradient(90deg, rgba(255,255,255,.45), rgba(255,255,255,0) 70%);
+  mix-blend-mode: screen;
+  animation: vialShimmer 3.2s linear infinite;
+}
+.meter-fill::after {
+  /* bubbles */
+  content:"";
+  position:absolute; inset:0;
+  background:
+    radial-gradient(6px 6px at 20% 70%, rgba(255,255,255,.35), transparent 60%),
+    radial-gradient(5px 5px at 45% 65%, rgba(255,255,255,.25), transparent 60%),
+    radial-gradient(4px 4px at 65% 75%, rgba(255,255,255,.25), transparent 60%),
+    radial-gradient(3px 3px at 85% 68%, rgba(255,255,255,.2), transparent 60%);
+  animation: bubbles 5s ease-in-out infinite;
+  opacity:.6;
+}
+
+@keyframes vialShimmer {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(400%); }
+}
+@keyframes bubbles {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-6%); }
+}
+
+/* Value text */
+.value-inline { font-weight: 900; }
+
+/* Rune-style ruler (softer hue than bright red) */
+.ruler { height: 26px; margin-top: 4px; position: relative; }
+.ruler::before {
+  content:"";
+  position:absolute; left:0; right:0; top:8px; height:2px;
+  background: linear-gradient(90deg, transparent, var(--witch-rune) 10%, var(--witch-rune) 90%, transparent);
+  opacity:.85;
+}
+.tick::before {
+  width: 2px; height: 9px; margin: 0 auto;
+  background: var(--witch-rune);
+}
+.tick-label {
+  color: var(--witch-rune);
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+}
+
+/* Better close hover */
+.modal-close:hover { background: rgba(0,0,0,.08); }
+@media (prefers-color-scheme: dark) {
+  .modal-close:hover { background: rgba(255,255,255,.08); }
+}
+
+
+/* ===== Twilight sky overlay for the map ===== */
+.witch-sky { position: relative; }
+.witch-sky::before {
+  /* soft twilight gradient + vignette */
+  content:"";
+  position:absolute; inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(120% 100% at 50% 120%, rgba(2,6,23,.75), transparent 55%),
+    linear-gradient(180deg, rgba(40,13,78,.35), rgba(2,6,23,.0) 35%, rgba(2,6,23,.35) 100%);
+  mix-blend-mode: multiply;
+}
+.witch-sky::after {
+  /* subtle star specks with twinkle */
+  content:"";
+  position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(1.2px 1.2px at 12% 24%, rgba(255,255,255,.8), transparent 60%),
+    radial-gradient(1.5px 1.5px at 72% 18%, rgba(255,255,255,.7), transparent 60%),
+    radial-gradient(1px 1px     at 38% 66%, rgba(255,255,255,.6), transparent 60%),
+    radial-gradient(1.3px 1.3px at 86% 74%, rgba(255,255,255,.7), transparent 60%);
+  animation: twinkle 6s ease-in-out infinite;
+  opacity:.65;
+}
+@keyframes twinkle {
+  0%,100% { opacity:.40; transform: translateY(0) }
+  50%     { opacity:.85; transform: translateY(-2px) }
+}
+/* ===== Centered, fancy modal title ===== */
+.modal-head.modal-head--center {
+  position: sticky; top: 0;
+  display: block; text-align: center;
+  padding-top: 18px; padding-bottom: 14px;
+}
+.modal-head.modal-head--center .modal-title { 
+  display:flex; flex-direction:column; align-items:center; gap:4px; 
+  margin: 0 auto; 
+}
+.modal-head.modal-head--center .modal-close {
+  position:absolute; right:12px; top:10px;
+  background: transparent;
+}
+
+.modal-title.fancy .modal-name {
+  font-family: "Cinzel", serif;
+  letter-spacing: .4px;
+  font-size: clamp(20px, 2.2vw, 26px);
+  /* gradient ink + subtle glow */
+  background: linear-gradient(180deg, #FDE68A 10%, #fff 35%, #C4B5FD 75%, #8B5CF6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 1px 0 rgba(0,0,0,.15), 0 6px 20px rgba(139,92,246,.25);
+}
+.modal-title.fancy .spark { 
+  font-size: .9em; color: #E9D5FF; filter: drop-shadow(0 0 6px rgba(139,92,246,.45));
+}
+
+.title-rule {
+  width: min(420px, 70%); height: 8px; margin-top: 6px;
+  background:
+    radial-gradient(6px 6px at 0% 50%, #FDE68A, transparent 60%),
+    linear-gradient(90deg, rgba(233,213,255,.0), rgba(233,213,255,.9), rgba(233,213,255,.0)),
+    radial-gradient(6px 6px at 100% 50%, #FDE68A, transparent 60%);
+  opacity:.85;
+  border-radius: 999px;
+}
+/* Darker ink for the fancy title */
+.modal-title.fancy .modal-name.darker {
+  background: linear-gradient(180deg, #A78BFA 0%, #7C3AED 45%, #5B21B6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;           /* keep gradient ink */
+  text-shadow: 0 1px 0 rgba(0,0,0,.25), 0 6px 18px rgba(92,45,198,.25);
+}
+
+/* Centered date chips row */
+.controls-row {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: center;
+  gap: 18px;
+  padding: 8px 18px 2px;
+}
+.date-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(139,92,246,.12);
+  border: 1px solid rgba(139,92,246,.35);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.4);
+  font-weight: 700;
+}
+.date-chip .label {
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: .4px;
+  opacity: .8;
+}
+.date-chip .value { font-variant-numeric: tabular-nums; }
+.date-chip .cal { filter: drop-shadow(0 0 6px rgba(139,92,246,.35)); }
+
+@media (prefers-color-scheme: dark) {
+  .date-chip {
+    background: rgba(139,92,246,.16);
+    border-color: rgba(139,92,246,.45);
+  }
+}
+/* ===== Cauldron idle animations ===== */
+.marker.witch-anim { position: relative; }
+.marker.witch-anim .cauldron-img {
+  animation: cauldron-bob 4.2s ease-in-out infinite;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.35));
+  will-change: transform, filter;
+  transform-origin: 50% 65%;
+}
+.marker.witch-anim:hover .cauldron-img {
+  animation-duration: 2.6s;
+  transform: translateY(-2px) scale(1.02);
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,.45)) brightness(1.06);
+}
+
+/* soft floor glow */
+.marker.witch-anim .glow {
+  position: absolute;
+  left: 50%; bottom: 2%;
+  width: 62%; height: 22%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(139,92,246,.35), rgba(139,92,246,0) 65%);
+  filter: blur(8px);
+  pointer-events: none;
+  z-index: 0;
+  animation: glow-pulse 3.6s ease-in-out infinite;
+}
+
+/* rising bubbles */
+.marker.witch-anim .bubble {
+  position: absolute;
+  left: 50%; bottom: 52%;
+  transform: translateX(-50%);
+  background: radial-gradient(circle at 30% 30%, #fff, #E9D5FF 45%, rgba(233,213,255,.0) 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 2;
+  animation: bubble-rise 3.4s ease-in-out infinite;
+}
+.marker.witch-anim .bubble.b1 { width: 10px; height: 10px; margin-left: -8px; }
+.marker.witch-anim .bubble.b2 { width: 8px;  height: 8px;  margin-left:  4px; }
+.marker.witch-anim .bubble.b3 { width: 6px;  height: 6px;  margin-left: -2px; }
+
+/* keyframes */
+@keyframes cauldron-bob {
+  0%,100% { transform: translateY(0) }
+  50%     { transform: translateY(-6px) }
+}
+@keyframes glow-pulse {
+  0%,100% { opacity: .45; transform: translateX(-50%) scale(1) }
+  50%     { opacity: .85; transform: translateX(-50%) scale(1.08) }
+}
+@keyframes bubble-rise {
+  0%   { transform: translate(-50%, 8px) scale(.7); opacity: 0; }
+  15%  { opacity: .9; }
+  50%  { transform: translate(-50%, -14px) scale(1); opacity: .8; }
+  100% { transform: translate(-50%, -34px) scale(1.15); opacity: 0; }
+}
+
+/* respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .marker.witch-anim .cauldron-img,
+  .marker.witch-anim .glow,
+  .marker.witch-anim .bubble { animation: none !important; }
+}
+/* ===== Route overlay ===== */
+/* Make the line hittable by cursor even if thin visually */
+.edge {
+  stroke: url(#edgeGlow);
+  stroke-width: 3;
+  fill: none;
+  filter: url(#softGlow);
+  pointer-events: stroke;       /* <— important */
+}
+
+.edge:hover {
+  stroke-width: 4;              /* optional: slight feedback on hover */
+  opacity: 0.95;
+}
+
+
+.edge-layer {
+  position: absolute; inset: 0;
+  pointer-events: auto;               /* don't block clicks */
+  z-index: 6;                         /* under markers */
+}
+.edge-layer .edge {
+  fill: none;
+  stroke: url(#edgeGlow);
+  stroke-width: 5;
+  opacity: .9;
+  filter: url(#softGlow);
+}
+
+/* ===== Market pin animation ===== */
+.market-pin { position: relative; }
+.market-pin .market-ring {
+  position: absolute; inset: -6%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(199, 210, 254, .35), rgba(167,139,250,.15) 40%, rgba(167,139,250,0) 72%);
+  animation: market-pulse 3.6s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes market-pulse {
+  0%,100% { transform: scale(1); opacity:.65 }
+  50% { transform: scale(1.06); opacity:.95 }
+}
+
+/* (Your existing witch-anim cauldron CSS stays the same) */
