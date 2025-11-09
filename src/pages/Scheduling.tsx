@@ -1,17 +1,10 @@
 // src/pages/Scheduling.tsx
-export default function Scheduling() {
+import WeekGraph from "../backend/weekGraph";
+
+export default function Tracking() {
   return (
-    <div
-      style={{
-        height: "100vh",
-        background: "black",
-        color: "white",
-        display: "grid",
-        placeItems: "center",
-        fontSize: 24,
-      }}
-    >
-      Scheduling (placeholder)
+    <div>
+      <h1>Tracking Page</h1>
     </div>
   );
 }
