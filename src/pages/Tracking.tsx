@@ -53,7 +53,9 @@ export default function Tracking() {
       const discrepancies = getDiscrepancyCheck(data, ticketData, cauldron);
       newData[cauldron] = discrepancies;
     });
-
+    
+    console.log("discrepancies: ", newData);
+    console.log("cauldron general data: ", data);
     setCauldronData(newData);
     
   }, [data, ticketData]);

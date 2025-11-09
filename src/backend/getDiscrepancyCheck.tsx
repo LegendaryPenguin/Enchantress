@@ -1,7 +1,7 @@
 
 export function getDiscrepancyCheck(data, ticketData, cauldron){
-  console.log(data);
-  console.log("ticket data: ", ticketData);
+  //console.log(data);
+  //console.log("ticket data: ", ticketData);
   const cauldron_data = data.map(item => ({
     timestamp: item.timestamp,
     value: item.cauldron_levels[cauldron]
@@ -14,8 +14,8 @@ export function getDiscrepancyCheck(data, ticketData, cauldron){
     isDiscrepancy: null,  
   }));
 
-  console.log(cauldron_data)
-  console.log(cauldron_ticket_data)
+  //console.log(cauldron_data)
+  //console.log(cauldron_ticket_data)
 
   const discrepancy_list = []; 
   const seenTickets = new Set();
@@ -46,7 +46,7 @@ export function getDiscrepancyCheck(data, ticketData, cauldron){
         ticket => ticket.date === prev.timestamp.slice(0, 10)
       );
 
-      console.log("matching_tickets: ", matching_tickets)
+      //console.log("matching_tickets: ", matching_tickets)
 
       if (matching_tickets.length === 0) {
         const key = prev.timestamp + "_" + cauldron;
@@ -100,7 +100,7 @@ export function getDiscrepancyCheck(data, ticketData, cauldron){
     ).values()
   );
 
-  console.log("discrepancy list: ", discrepancy_list)
-  console.log("unique list: ", unique_discrepancies)
+  //console.log("discrepancy list: ", discrepancy_list)
+  //console.log("unique list: ", unique_discrepancies)
   return unique_discrepancies
 }
