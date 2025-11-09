@@ -70,7 +70,13 @@ export function useDiscrepancyCheck(cauldron){
             if (ticket.isDiscrepancy === null) ticket.isDiscrepancy = true;
 
             if (!seenTickets.has(ticket.ticket_id)) {
-              discrepancy_list.push(ticket);
+              //discrepancy_list.push(ticket);
+              discrepancy_list.push({
+                timestamp: prev.timestamp,
+                cauldron_id: cauldron,
+                lost_amount,
+                isDiscrepancy: true,
+              });
               seenTickets.add(ticket.ticket_id);
             }
           });
@@ -82,7 +88,16 @@ export function useDiscrepancyCheck(cauldron){
       }
     }
   }
+  const unique_discrepancies = Array.from(
+    new Map(
+      discrepancy_list.map(d => [
+        `${d.timestamp}_${d.cauldron_id}_${d.lost_amount.toFixed(6)}`,
+        d
+      ])
+    ).values()
+  );
 
   console.log("discrepancy list: ", discrepancy_list)
-  return discrepancy_list
+  console.log("unique list: ", unique_discrepancies)
+  return unique_discrepancies
 }
